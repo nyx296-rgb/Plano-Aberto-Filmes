@@ -132,9 +132,25 @@ app.use('/api/trpc', require('./routes/trpc'));
 
 // Image Uploads — requires auth + extension whitelist
 const multer = require('multer');
-const upload = multer({ dest: 'uploads_tmp/', limits: { fileSize: 8 * 1024 * 1024 } });
-if (!fs.existsSync(path.join(process.cwd(), 'public', 'uploads'))) {
-  fs.mkdirSync(path.join(process.cwd(), 'public', 'uploads'), { recursive: true });
+
+const dataDir = process.env.DATA_DIR;
+const uploadsTmpDir = dataDir ? path.join(dataDir, 'uploads_tmp') : path.join(process.cwd(), 'uploads_tmp');
+const uploadsDir = dataDir ? path.join(dataDir, 'uploads') : path.join(process.cwd(), 'public', 'uploads');
+
+const upload = multer({ dest: uploadsTmpDir, limits: { fileSize: 8 * 1024 * 1024 } });
+
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+if (!fs.existsSync(uploadsTmpDir)) {
+  fs.mkdirSync(uploadsTmpDir, { recursive: true });
+}
+
+// Quando usamos um DATA_DIR externo, temos de servir esta pasta com as imagens.
+// Quando é na pasta public/uploads (localmente), o express.static('public') já o faz, 
+// mas não faz mal termos isto também para fallback, sendo que se houver o DATA_DIR servimos daqui
+if (dataDir) {
+  app.use('/uploads', express.static(uploadsDir));
 }
 
 const ALLOWED_EXTS  = new Set(['.jpg', '.jpeg', '.png', '.gif', '.webp']);
@@ -150,7 +166,7 @@ app.post('/api/upload', authenticateToken, upload.single('file'), (req, res) => 
   }
 
   const filename = `${Date.now()}-${Math.round(Math.random() * 1E9)}${ext}`;
-  const targetPath = path.join(process.cwd(), 'public', 'uploads', filename);
+  const targetPath = path.join(uploadsDir, filename);
 
   try {
     fs.renameSync(req.file.path, targetPath);

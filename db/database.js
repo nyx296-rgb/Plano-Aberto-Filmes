@@ -3,7 +3,9 @@ const fs = require('fs');
 const path = require('path');
 const bcrypt = require('bcryptjs');
 
-const DB_PATH = path.join(__dirname, 'database.db');
+const DB_PATH = process.env.DATA_DIR 
+  ? path.join(process.env.DATA_DIR, 'database.db') 
+  : path.join(__dirname, 'database.db');
 
 let db = null;
 let initPromise = null;
