@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <title>Plano Aberto Filmes</title>
+    <meta name="description" content="Artigos e Vídeos sobre Cinema — Samuca SC Filmes & Novo Cine Debate">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Plano Aberto Filmes">
+    <meta property="og:locale" content="pt_BR">
+    <link rel="stylesheet" href="/site.css">
+    <style>
+        /* Premium Aesthetics Overrides from Reference */
+        :root {
+            --accent: #e50914;
+            --accent-hover: #ff1a1a;
+        }
+        
+        html.dark {
+            background-color: #000;
+            color: #fff;
+        }
+
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            width: 100%;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .header-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            overflow-x: auto;
+            white-space: nowrap;
+            width: 100%;
+            padding-bottom: 0.25rem;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .nav-links::-webkit-scrollbar {
+            display: none;
+        }
+        @media (min-width: 768px) {
+            .nav-links {
+                width: auto;
+            }
+        }
+
+        .nav-links a {
+            color: #a3a3a3;
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: #fff;
+        }
+
+        #login-btn {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            z-index: 9999;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            font-size: 14px;
+            font-weight: 500;
+            background: var(--accent);
+            color: #fff;
+            height: 32px;
+            border-radius: 6px;
+            gap: 6px;
+            padding: 0 12px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        #login-btn:hover {
+            background: var(--accent-hover);
+        }
+
+        .paf-stat-badge {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            color: #888;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-family: system-ui, sans-serif;
+            pointer-events: none;
+        }
+
+        #paf-stats-container {
+            position: fixed;
+            bottom: 1rem;
+            left: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            z-index: 999;
+        }
+
+        /* Logo override styles */
+        .hero-logo-fix {
+            width: 160px !important;
+            height: 160px !important;
+            object-fit: contain !important;
+        }
+    </style>
+</head>
+<body class="dark">
+    <header class="site-header">
+        <div class="header-container" style="max-width: 1400px; margin: 0 auto; padding: 0.75rem 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+            <a href="/" data-link style="text-decoration:none;">
+                <div style="display:flex;align-items:center;gap:0.75rem;cursor:pointer;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ca8a04" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect width="18" height="18" x="3" y="3" rx="2"></rect>
+                      <path d="M7 3v18"></path>
+                      <path d="M3 7.5h4"></path>
+                      <path d="M3 12h18"></path>
+                      <path d="M3 16.5h4"></path>
+                      <path d="M17 3v18"></path>
+                      <path d="M17 7.5h4"></path>
+                      <path d="M17 16.5h4"></path>
+                    </svg>
+                    <span style="font-weight:700;font-size:1.4rem;color:#fff;letter-spacing:-0.03em;">Plano Aberto Filmes</span>
+                </div>
+            </a>
+            <nav class="nav-links">
+                <a href="/articles" data-link style="color:#eee; text-decoration:none; font-size: 0.9rem; font-weight: 500;">Artigos</a>
+                <a href="/news" data-link style="color:#eee; text-decoration:none; font-size: 0.9rem; font-weight: 500;">Notícias / Perguntas</a>
+                <a href="/videos" data-link style="color:#eee; text-decoration:none; font-size: 0.9rem; font-weight: 500;">Vídeos</a>
+                <a href="/contact" data-link style="color:#eee; text-decoration:none; font-size: 0.9rem; font-weight: 500;">Contato</a>
+                <a href="/patrocinadores" style="color:#eee; text-decoration:none; font-size: 0.9rem; font-weight: 700; border: 1px solid rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 6px; background: rgba(229,9,20,0.1);">Patrocinadores</a>
+                <a href="/apoiadores" style="color:#eee; text-decoration:none; font-size: 0.9rem; font-weight: 700; border: 1px solid rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 6px; background: rgba(229,9,20,0.1);">Apoiadores</a>
+            </nav>
+            <a href="/login.html" style="background:#e50914; color:#fff; padding: 0.5rem 1.5rem; border-radius: 6px; text-decoration:none; font-weight: 700; font-size: 0.9rem; transition: background 0.2s;">Entrar</a>
+        </div>
+    </header>
+
+    <div id="app"></div>
+
+    <div id="paf-stats-container">
+        <div id="paf-online-counter" class="paf-stat-badge">Online: 1</div>
+        <div id="paf-total-counter" class="paf-stat-badge">Visitantes: ...</div>
+    </div>
+
+    <script src="/app.js"></script>
+    <script>
+        // Aesthetics & Utility Patches from Reference
+        
+        // Stats update (Online & Total)
+        async function updateStats() {
+            try {
+                // Online count
+                const rOnline = await fetch('/api/stats/online');
+                const dOnline = await rOnline.json();
+                const elOnline = document.getElementById('paf-online-counter');
+                if(elOnline) elOnline.textContent = 'Online: ' + (dOnline.count || dOnline.online || 1);
+
+                // Total count
+                const rTotal = await fetch('/api/stats/global-total');
+                const dTotal = await rTotal.json();
+                const elTotal = document.getElementById('paf-total-counter');
+                if(elTotal) elTotal.textContent = 'Visitantes: ' + (dTotal.total || 0).toLocaleString('pt-BR');
+            } catch(e){}
+        }
+        setInterval(updateStats, 30000);
+        updateStats();
+
+        // Logo fix for hero section (in case app.js renders it with wrong src or style)
+        const observer = new MutationObserver(() => {
+            const heroLogo = document.querySelector('.hero-logo');
+            if (heroLogo && !heroLogo.classList.contains('hero-logo-fix')) {
+                heroLogo.classList.add('hero-logo-fix');
+                if (!heroLogo.src.includes('logo.png')) {
+                    heroLogo.src = '/logo.png';
+                }
+            }
+            
+            // Re-bind links if app.js didn't
+            if (window.bindLinks) window.bindLinks();
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+
+        // Link click intercept for specific pages if needed
+        document.addEventListener('click', e => {
+            const a = e.target.closest('a');
+            if(a && a.dataset.link === undefined && a.href && a.href.startsWith(window.location.origin)) {
+                // Potential SPA navigation for links without data-link
+                const url = new URL(a.href);
+                const path = url.pathname;
+                if (['/', '/articles', '/videos', '/news', '/supporters', '/sponsors', '/contact'].some(p => path === p || path.startsWith(p + '/'))) {
+                    // e.preventDefault();
+                    // if(window.navigate) window.navigate(path);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

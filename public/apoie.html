@@ -1,0 +1,932 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <title>Apoie o Plano Aberto Filmes</title>
+    <meta name="description" content="Saiba como apoiar o Plano Aberto Filmes e conheça nossos parceiros." />
+    <!-- TRPC Interceptor -->
+    <script src="/trpc-interceptor.js"></script>
+    <!-- Tabler Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    <!-- Static Header to avoid React Router 404 conflict -->
+    <link rel="stylesheet" href="/assets/index-biTP9gHR.css">
+    <style>
+        :root {
+            --paf-red: #e50914;
+            --paf-red-hover: #ff1a1a;
+            --paf-dark: #0a0a0a;
+            --paf-card: #141414;
+            --paf-border: rgba(255,255,255,0.1);
+        }
+
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            width: 100%;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0.75rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #eee;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover { color: #fff; }
+
+        .btn-login {
+            background: var(--paf-red);
+            color: #fff;
+            padding: 0.5rem 1.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        html, body { 
+            background: var(--paf-dark) !important; 
+            color: #fff !important; 
+            font-family: 'Inter', system-ui, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        #paf-content {
+            padding-top: 80px; /* space for fixed header */
+            max-width: 1100px;
+            margin: 0 auto;
+            padding-bottom: 5rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 0 1.5rem;
+        }
+
+        .section-header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            margin-bottom: 1rem;
+            background: linear-gradient(180deg, #fff 0%, #888 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-header p {
+            color: #a3a3a3;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Support Grid */
+        .support-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            padding: 0 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        @media (max-width: 850px) {
+            .support-grid { grid-template-columns: 1fr; }
+        }
+
+        .support-card {
+            background: var(--paf-card);
+            border: 1px solid var(--paf-border);
+            border-radius: 14px;
+            padding: 1.2rem 1.5rem;
+            text-align: center;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .support-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--paf-red);
+        }
+
+        .support-icon {
+            font-size: 1.6rem;
+            margin-bottom: 0.6rem;
+            display: block;
+        }
+
+        .support-card h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+        }
+
+        .support-card p {
+            color: #a3a3a3;
+            font-size: 0.8rem;
+            margin-bottom: 0.8rem;
+            line-height: 1.4;
+        }
+
+        .support-card .form-submit {
+            font-size: 0.78rem;
+            padding: 0.5rem 1rem;
+        }
+
+        /* Partners Section */
+        .partners-section {
+            background: rgba(255,255,255,0.02);
+            border-radius: 32px;
+            padding: 4rem 2rem;
+            margin: 0 1.5rem 5rem;
+            border: 1px solid var(--paf-border);
+        }
+
+        .partners-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .partners-title h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .partners-title span {
+            color: var(--paf-red);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            font-weight: 700;
+        }
+
+        /* Carousel Styles */
+        .sp-block {
+            margin-bottom: 3rem;
+        }
+
+        .sp-heading {
+            margin-bottom: 2rem;
+        }
+
+        .sp-eyebrow {
+            display: block;
+            font-size: 11px;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 6px;
+        }
+
+        .sp-title {
+            font-size: 26px;
+            font-weight: 600;
+            margin: 0;
+            color: #fff;
+        }
+
+        .sp-tier {
+            margin-bottom: 2rem;
+        }
+
+        .sp-tier-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .sp-tier-line {
+            flex: 1;
+            height: 1px;
+            background: #333;
+        }
+
+        .sp-badge {
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 3px 10px;
+            border-radius: 999px;
+            white-space: nowrap;
+        }
+
+        .sp-badge--gold   { background: rgba(212,168,58,0.15); color: #d4a83a; border: 1px solid rgba(212,168,58,0.3); }
+        .sp-badge--silver { background: rgba(255,255,255,0.08); color: #aaa; border: 1px solid rgba(255,255,255,0.15); }
+        .sp-badge--bronze { background: rgba(200,132,90,0.15); color: #c8845a; border: 1px solid rgba(200,132,90,0.3); }
+
+        .sp-track-wrap {
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            cursor: grab;
+            padding-bottom: 4px;
+        }
+
+        .sp-track-wrap:active { cursor: grabbing; }
+        .sp-track-wrap::-webkit-scrollbar { display: none; }
+
+        .sp-track {
+            display: flex;
+            gap: 14px;
+            width: max-content;
+        }
+
+        .sp-card {
+            width: 180px;
+            min-height: 268px;
+            background: #141414;
+            border: 1px solid #333;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            flex-shrink: 0;
+            transition: border-color 0.15s, transform 0.15s;
+        }
+
+        .sp-card:hover {
+            border-color: #555;
+            transform: translateY(-2px);
+        }
+
+        .sp-card--gold {
+            border-color: #a07820;
+        }
+
+        .sp-card--gold:hover {
+            border-color: #d4a83a;
+        }
+
+        .sp-card-top {
+            height: 80px;
+            background: #1a1a1a;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .sp-logo {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            font-weight: 600;
+            color: #f0f0f0;
+        }
+
+        .sp-logo--person {
+            border-radius: 50%;
+            background: #1e2a4a;
+            border-color: #3040a0;
+            color: #9aa8f0;
+        }
+
+        .sp-card-body {
+            padding: 14px 14px 8px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            gap: 3px;
+        }
+
+        .sp-card-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #f0f0f0;
+            margin: 0;
+        }
+
+        .sp-card-type {
+            font-size: 11px;
+            color: #777;
+            margin: 0 0 6px;
+        }
+
+        .sp-card-desc {
+            font-size: 12px;
+            color: #aaa;
+            line-height: 1.55;
+            margin: 0;
+            flex: 1;
+        }
+
+        .sp-card-footer {
+            padding: 0 14px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .sp-card-divider {
+            height: 1px;
+            background: #333;
+            margin-bottom: 4px;
+        }
+
+        .sp-social {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #777;
+            text-decoration: none;
+            transition: color 0.15s;
+        }
+
+        .sp-social:hover {
+            color: #f0f0f0;
+        }
+
+        .sp-social i {
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        /* Supporters Section */
+        .supporters-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 5rem;
+            padding: 0 1.5rem;
+        }
+
+        .supporter-badge {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--paf-border);
+            padding: 0.6rem 1.2rem;
+            border-radius: 100px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #ddd;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .supporter-badge i {
+            color: #ca8a04; /* gold */
+        }
+
+        /* Connect Section */
+        .connect-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            padding: 0 1.5rem;
+            align-items: start;
+        }
+
+        @media (max-width: 850px) {
+            .connect-section { grid-template-columns: 1fr; }
+        }
+
+        .social-emblems {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .emblem {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            text-decoration: none;
+            padding: 1.2rem;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--paf-border);
+            border-radius: 16px;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .emblem:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: var(--paf-red);
+        }
+
+        .emblem-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--paf-red);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #fff;
+        }
+
+        .emblem-info h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.2rem;
+        }
+
+        .emblem-info p {
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        /* Form Section */
+        .contact-form-wrap {
+            background: var(--paf-card);
+            padding: 2.5rem;
+            border-radius: 24px;
+            border: 1px solid var(--paf-border);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #555;
+            margin-bottom: 0.6rem;
+            letter-spacing: 0.05em;
+        }
+
+        .form-input {
+            width: 100%;
+            background: #0d0d0d;
+            border: 1px solid #222;
+            padding: 0.9rem 1.2rem;
+            border-radius: 12px;
+            color: #fff;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--paf-red);
+        }
+
+        .form-submit {
+            width: 100%;
+            background: var(--paf-red);
+            color: #fff;
+            border: none;
+            padding: 1rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 1rem;
+        }
+
+        .form-submit:hover {
+            background: var(--paf-red-hover);
+        }
+
+        /* Stats badges */
+        .paf-stat-badge {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            color: #888;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-family: system-ui, sans-serif;
+            pointer-events: none;
+        }
+
+        #paf-stats-container {
+            position: fixed;
+            bottom: 1rem;
+            left: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            z-index: 999;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Generic Logo Style */
+        #paf-nav-logo {
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: #fff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-msg {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+        .status-msg.success { background: rgba(74,222,128,0.1); color: #4ade80; border: 1px solid rgba(74,222,128,0.2); }
+        .status-msg.error { background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.2); }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="header-container">
+            <a href="/" style="text-decoration:none; display:flex; align-items:center; gap:0.75rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ca8a04" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect width="18" height="18" x="3" y="3" rx="2"></rect>
+                  <path d="M7 3v18"></path>
+                  <path d="M3 7.5h4"></path>
+                  <path d="M3 12h18"></path>
+                  <path d="M3 16.5h4"></path>
+                  <path d="M17 3v18"></path>
+                  <path d="M17 7.5h4"></path>
+                  <path d="M17 16.5h4"></path>
+                </svg>
+                <span style="font-weight:700;font-size:1.4rem;color:#fff;letter-spacing:-0.03em;">Plano Aberto Filmes</span>
+            </a>
+            <nav class="nav-links">
+                <a href="/articles">Artigos</a>
+                <a href="/news">Notícias / Perguntas</a>
+                <a href="/videos">Vídeos</a>
+                <a href="/contact">Contato</a>
+                <a href="/patrocinadores" style="font-weight:700; color:var(--paf-red);">Patrocinadores</a>
+                <a href="/apoiadores" style="font-weight:700; color:var(--paf-red);">Apoiadores</a>
+            </nav>
+            <a href="/login.html" class="btn-login">Entrar</a>
+        </div>
+    </header>
+
+    <div id="paf-content">
+        <div class="section-header">
+            <h1>Apoie o Plano Aberto Filmes</h1>
+            <p>Seja parte da nossa jornada cinematográfica. Conheça quem nos apoia e saiba como você também pode contribuir para a cultura e educação através do cinema.</p>
+        </div>
+
+        <div class="support-grid">
+            <div class="support-card">
+                <span class="support-icon">💼</span>
+                <h3>Patrocínio</h3>
+                <p>Empresas que investem na nossa produção e alcançam um público qualificado e apaixonado por cinema.</p>
+                <a href="#contato" class="form-submit" style="text-decoration:none; display:inline-block;">Quero Patrocinar</a>
+            </div>
+            <div class="support-card">
+                <span class="support-icon">❤️</span>
+                <h3>Apoio Individual</h3>
+                <p>Para quem ama cinema e quer ajudar o projeto a crescer com contribuições pontuais ou recorrentes.</p>
+                <a href="#contato" class="form-submit" style="text-decoration:none; display:inline-block; background:#333;">Saiba Mais</a>
+            </div>
+            <div class="support-card">
+                <span class="support-icon">🎭</span>
+                <h3>Parcerias</h3>
+                <p>Colaborações criativas, festivais e projetos educativos. Vamos construir algo novo juntos.</p>
+                <a href="#contato" class="form-submit" style="text-decoration:none; display:inline-block; background:#333;">Conversar</a>
+            </div>
+        </div>
+
+        <!-- Patrocinadores Section -->
+        <div class="partners-section">
+            <div class="sp-block">
+                <div class="sp-heading">
+                    <span class="sp-eyebrow">Business Partners</span>
+                    <h2 class="sp-title">Nossos Patrocinadores</h2>
+                </div>
+
+                <!-- NÍVEL OURO -->
+                <div class="sp-tier">
+                    <div class="sp-tier-label">
+                        <span class="sp-badge sp-badge--gold">Ouro</span>
+                        <span class="sp-tier-line"></span>
+                    </div>
+                    <div class="sp-track-wrap">
+                        <div class="sp-track" id="sponsors-gold">
+                            <!-- Fetching... -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NÍVEL PRATA -->
+                <div class="sp-tier">
+                    <div class="sp-tier-label">
+                        <span class="sp-badge sp-badge--silver">Prata</span>
+                        <span class="sp-tier-line"></span>
+                    </div>
+                    <div class="sp-track-wrap">
+                        <div class="sp-track" id="sponsors-silver">
+                            <!-- Fetching... -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NÍVEL BRONZE -->
+                <div class="sp-tier">
+                    <div class="sp-tier-label">
+                        <span class="sp-badge sp-badge--bronze">Bronze</span>
+                        <span class="sp-tier-line"></span>
+                    </div>
+                    <div class="sp-track-wrap">
+                        <div class="sp-track" id="sponsors-bronze">
+                            <!-- Fetching... -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Apoiadores Section -->
+        <div class="partners-section">
+            <div class="sp-block">
+                <div class="sp-heading">
+                    <span class="sp-eyebrow">Comunidade</span>
+                    <h2 class="sp-title">Apoiadores do Projeto</h2>
+                </div>
+                <div class="sp-tier">
+                    <div class="sp-track-wrap">
+                        <div class="sp-track" id="supporters-list">
+                            <!-- Fetching... -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Connect & Form -->
+        <div class="connect-section" id="contato">
+            <div class="social-emblems" id="social-emblems-list">
+                <div class="partners-title" style="text-align:left; margin-bottom:2rem;">
+                    <span>Social Media</span>
+                    <h2>Redes Sociais</h2>
+                </div>
+            </div>
+
+            <div class="contact-form-wrap">
+                <div class="partners-title" style="text-align:left; margin-bottom:2rem;">
+                    <span>Inbox</span>
+                    <h2>Envie uma Mensagem</h2>
+                </div>
+                
+                <form id="paf-contact-form">
+                    <input type="hidden" name="source" value="Página de Apoio">
+                    <div class="form-group">
+                        <label>Seu Nome</label>
+                        <input type="text" name="name" class="form-input" placeholder="Como podemos te chamar?" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email de Contato</label>
+                        <input type="email" name="email" class="form-input" placeholder="exemplo@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Assunto</label>
+                        <input type="text" name="subject" class="form-input" placeholder="Ex: Patrocínio, Dúvida...">
+                    </div>
+                    <div class="form-group">
+                        <label>Mensagem</label>
+                        <textarea name="content" class="form-input" rows="5" placeholder="Escreva sua mensagem aqui..." required></textarea>
+                    </div>
+                    <button type="submit" class="form-submit" id="submit-btn">Enviar Mensagem</button>
+                    <div id="form-status" class="status-msg"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Counters -->
+    <div id="paf-stats-container">
+        <div id="paf-online-counter" class="paf-stat-badge">Online: 1</div>
+        <div id="paf-total-counter" class="paf-stat-badge">Visitantes: ...</div>
+    </div>
+
+    <script>
+        function sponsorCard(s, tier) {
+            const goldClass = tier === 'gold' ? ' sp-card--gold' : '';
+            const initials = s.name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+            const logo = s.logo_url
+                ? `<img src="${s.logo_url}" alt="${s.name}" style="width:48px;height:48px;object-fit:contain;border-radius:8px;">`
+                : `<div class="sp-logo">${initials}</div>`;
+            const ig = s.instagram ? s.instagram.replace('@','') : '';
+            const web = s.website ? s.website.replace(/^https?:\/\//,'').replace(/\/$/,'') : '';
+            let social = '';
+            if (s.instagram) {
+                social += `<a class="sp-social" href="https://instagram.com/${ig}" target="_blank" rel="noopener"><i class="ti ti-brand-instagram" aria-hidden="true"></i>${s.instagram}</a>`;
+            }
+            if (s.website) {
+                social += `<a class="sp-social" href="${s.website}" target="_blank" rel="noopener"><i class="ti ti-world" aria-hidden="true"></i>${web}</a>`;
+            }
+            return `
+            <div class="sp-card${goldClass}">
+                <div class="sp-card-top">${logo}</div>
+                <div class="sp-card-body">
+                    <p class="sp-card-name">${s.name}</p>
+                    <p class="sp-card-type">${s.description || ''}</p>
+                </div>
+                ${social ? `<div class="sp-card-footer"><div class="sp-card-divider"></div>${social}</div>` : ''}
+            </div>`;
+        }
+
+        function supporterCard(s) {
+            const initials = s.name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+            const logo = s.logo_url
+                ? `<img src="${s.logo_url}" alt="${s.name}" style="width:48px;height:48px;object-fit:contain;border-radius:50%;">`
+                : `<div class="sp-logo sp-logo--person">${initials}</div>`;
+            const ig = s.instagram ? s.instagram.replace('@','') : '';
+            const web = s.website ? s.website.replace(/^https?:\/\//,'').replace(/\/$/,'') : '';
+            let social = '';
+            if (s.instagram) {
+                social += `<a class="sp-social" href="https://instagram.com/${ig}" target="_blank" rel="noopener"><i class="ti ti-brand-instagram" aria-hidden="true"></i>${s.instagram}</a>`;
+            }
+            if (s.website) {
+                social += `<a class="sp-social" href="${s.website}" target="_blank" rel="noopener"><i class="ti ti-world" aria-hidden="true"></i>${web}</a>`;
+            }
+            return `
+            <div class="sp-card">
+                <div class="sp-card-top">${logo}</div>
+                <div class="sp-card-body">
+                    <p class="sp-card-name">${s.name}</p>
+                    <p class="sp-card-type">${s.description || ''}</p>
+                </div>
+                ${social ? `<div class="sp-card-footer"><div class="sp-card-divider"></div>${social}</div>` : ''}
+            </div>`;
+        }
+
+        const emptyMsg = '<p style="color:#555; padding:1rem;">Seja nosso primeiro patrocinador.</p>';
+
+        async function loadData() {
+            try {
+                const resSponsors = await fetch('/api/partners/sponsors');
+                const rawSponsors = await resSponsors.json();
+                const sponsors = rawSponsors.filter(s => s.status === 'active');
+
+                const goldEl = document.getElementById('sponsors-gold');
+                const silverEl = document.getElementById('sponsors-silver');
+                const bronzeEl = document.getElementById('sponsors-bronze');
+
+                const gold = sponsors.filter(s => /platinum|gold/i.test(s.tier));
+                const silver = sponsors.filter(s => /silver/i.test(s.tier));
+                const bronze = sponsors.filter(s => /bronze/i.test(s.tier));
+
+                goldEl.innerHTML = gold.length ? gold.map(s => sponsorCard(s, 'gold')).join('') : emptyMsg;
+                silverEl.innerHTML = silver.length ? silver.map(s => sponsorCard(s, 'silver')).join('') : emptyMsg;
+                bronzeEl.innerHTML = bronze.length ? bronze.map(s => sponsorCard(s, 'bronze')).join('') : emptyMsg;
+
+                const resSupporters = await fetch('/api/partners/supporters');
+                const rawSupporters = await resSupporters.json();
+                const supporters = rawSupporters.filter(s => s.status === 'active');
+                const supportersEl = document.getElementById('supporters-list');
+                if (supporters.length > 0) {
+                    supportersEl.innerHTML = supporters.map(s => supporterCard(s)).join('');
+                } else {
+                    supportersEl.innerHTML = '<p style="color:#555; padding:1rem;">Nenhum apoiador listado ainda.</p>';
+                }
+            } catch (e) { console.error('Load data error:', e); }
+
+            // Social Links
+            try {
+                const resSocial = await fetch('/api/settings/social-links');
+                const socialLinks = await resSocial.json();
+                const container = document.getElementById('social-emblems-list');
+                if (socialLinks.length > 0) {
+                    container.innerHTML = `
+                        <div class="partners-title" style="text-align:left; margin-bottom:2rem;">
+                            <span>Social Media</span>
+                            <h2>Redes Sociais</h2>
+                        </div>
+                        ${socialLinks.map(link => {
+                            const isEmail = link.url && link.url.startsWith('mailto:');
+                            const tag = isEmail ? 'a' : 'a';
+                            return `<${tag} href="${link.url}" target="_blank" class="emblem">
+                                <div class="emblem-icon"${isEmail ? ' style="background:#ca8a04;"' : ''}>${link.icon}</div>
+                                <div class="emblem-info">
+                                    <h4>${link.platform}</h4>
+                                    <p>${link.handle}</p>
+                                </div>
+                            </${tag}>`;
+                        }).join('')}
+                    `;
+                }
+            } catch (e) { console.error('Load social links error:', e); }
+        }
+
+        // Drag-to-scroll nos carrosséis
+        document.querySelectorAll('.sp-track-wrap').forEach(function(wrap) {
+            var isDown = false, startX, scrollLeft;
+            wrap.addEventListener('mousedown', function(e) {
+                isDown = true;
+                startX = e.pageX - wrap.offsetLeft;
+                scrollLeft = wrap.scrollLeft;
+            });
+            wrap.addEventListener('mouseleave', function() { isDown = false; });
+            wrap.addEventListener('mouseup', function() { isDown = false; });
+            wrap.addEventListener('mousemove', function(e) {
+                if (!isDown) return;
+                e.preventDefault();
+                var x = e.pageX - wrap.offsetLeft;
+                wrap.scrollLeft = scrollLeft - (x - startX);
+            });
+            var touchStartX, touchScrollLeft;
+            wrap.addEventListener('touchstart', function(e) {
+                touchStartX = e.touches[0].pageX;
+                touchScrollLeft = wrap.scrollLeft;
+            }, { passive: true });
+            wrap.addEventListener('touchmove', function(e) {
+                var x = e.touches[0].pageX;
+                wrap.scrollLeft = touchScrollLeft - (x - touchStartX);
+            }, { passive: true });
+        });
+
+        // Form handling
+        document.getElementById('paf-contact-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            const status = document.getElementById('form-status');
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+
+            btn.disabled = true;
+            btn.textContent = 'Enviando...';
+            status.style.display = 'none';
+
+            try {
+                const res = await fetch('/api/messages', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                if (result.success) {
+                    status.textContent = 'Mensagem enviada com sucesso! Responderemos em breve.';
+                    status.className = 'status-msg success';
+                    status.style.display = 'block';
+                    e.target.reset();
+                } else {
+                    throw new Error(result.error || 'Erro ao enviar');
+                }
+            } catch (err) {
+                status.textContent = 'Ops! Ocorreu um erro ao enviar sua mensagem. Tente novamente.';
+                status.className = 'status-msg error';
+                status.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Enviar Mensagem';
+            }
+        };
+
+        // Stats
+        async function updateStats() {
+            try {
+                const rO = await fetch('/api/stats/online');
+                const dO = await rO.json();
+                document.getElementById('paf-online-counter').textContent = 'Online: ' + (dO.count || 1);
+
+                const rT = await fetch('/api/stats/global-total');
+                const dT = await rT.json();
+                document.getElementById('paf-total-counter').textContent = 'Visitantes: ' + (dT.total || 0).toLocaleString('pt-BR');
+            } catch(e) {}
+        }
+
+        loadData();
+        setInterval(updateStats, 30000);
+        updateStats();
+    </script>
+</body>
+</html>

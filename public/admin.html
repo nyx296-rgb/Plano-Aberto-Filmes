@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Plano Aberto Filmes</title>
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+  <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+  <link rel="stylesheet" href="/admin.css">
+</head>
+<body>
+  <div class="sidebar">
+    <div class="logo"><div class="logo-text">PLANO ABERTO<br>FILMES</div></div>
+    <div id="sidebarGreeting" class="user-greeting" style="padding: 20px; color: #fff; font-weight: 600; font-size: 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 10px;"></div>
+    <div class="nav-item active" data-section="dashboard">📊 Visão Geral</div>
+    <div class="nav-item" data-section="analytics">📈 Analytics</div>
+    <div class="nav-item" data-section="articles">📝 Artigos</div>
+    <div class="nav-item" data-section="videos">🎬 Vídeos</div>
+    <div class="nav-item" data-section="news">📰 Notícias</div>
+    <div class="nav-item" data-section="partners">🤝 Parceiros</div>
+    <div class="nav-item" data-section="moderation">💬 Moderação</div>
+    <div class="nav-item" data-section="users">👥 Usuários</div>
+    <div class="nav-item" data-section="inbox">📥 Caixa de Entrada</div>
+    <div class="sidebar-footer">
+      <a href="/" target="_blank" class="btn btn-secondary btn-block" style="text-decoration:none">Ver Site</a>
+      <div class="logout-btn" id="logoutBtn">Sair</div>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- ===== DASHBOARD (Opção D) ===== -->
+    <div id="dashboardSection">
+      <div class="header"><h1>Visão Geral</h1></div>
+      
+      <div class="big-metric-grid">
+        <div class="big-metric-card">
+            <div class="big-metric-label">Total de Visitas</div>
+            <div class="big-metric-value" id="bigMetricVisitors">0</div>
+        </div>
+        <div class="big-metric-card">
+            <div class="big-metric-label">Páginas Lidas</div>
+            <div class="big-metric-value" id="bigMetricPageviews">0</div>
+        </div>
+        <div class="big-metric-card">
+            <div class="big-metric-label">Tempo Médio no Site</div>
+            <div class="big-metric-value" id="bigMetricDuration">0m 00s</div>
+        </div>
+      </div>
+
+      <h3 style="color: var(--text); margin-bottom: 20px; font-size: 1.25rem; font-weight: 600;">O que você quer publicar hoje?</h3>
+      <div class="action-grid">
+        <div class="action-card" onclick="openEditor('news')">
+            <span class="action-icon">📰</span>
+            <div class="action-title">+ Nova Notícia</div>
+        </div>
+        <div class="action-card" onclick="openEditor('article')">
+            <span class="action-icon">📝</span>
+            <div class="action-title">+ Novo Artigo</div>
+        </div>
+        <div class="action-card" onclick="openEditor('video')">
+            <span class="action-icon">🎬</span>
+            <div class="action-title">+ Novo Vídeo</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ANALYTICS (Old Dashboard) ===== -->
+    <div id="analyticsSection" class="hidden">
+      <div class="header"><h1>Analytics</h1>
+        <div class="period-pills">
+          <button class="period-btn active" data-period="7">7 dias</button>
+          <button class="period-btn" data-period="30">30 dias</button>
+          <button class="period-btn" data-period="90">90 dias</button>
+        </div>
+      </div>
+
+      <!-- Metric Cards -->
+      <div class="metrics-grid">
+        <div class="metric-card"><h3>Visitantes Únicos</h3><div class="metric-value" id="metricVisitors">0</div></div>
+        <div class="metric-card"><h3>Pageviews</h3><div class="metric-value" id="metricPageviews">0</div></div>
+        <div class="metric-card"><h3>Taxa de Rejeição</h3><div class="metric-value" id="metricBounce">0%</div></div>
+        <div class="metric-card"><h3>Duração Média</h3><div class="metric-value" id="metricDuration">0m 00s</div></div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="charts-row">
+        <div class="chart-card chart-wide">
+          <div class="chart-header">
+            <h3>Acessos ao longo do tempo</h3>
+            <div class="chart-legend"><span class="legend-dot" style="background:#60a5fa"></span> Visitantes Únicos <span class="legend-dot" style="background:#4ade80"></span> Pageviews</div>
+          </div>
+          <canvas id="accessChart"></canvas>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header"><h3>Canais de aquisição</h3></div>
+          <div class="donut-wrap">
+            <canvas id="donutChart"></canvas>
+            <div id="channelLegend" class="channel-legend">
+              <span><span class="legend-dot" style="background:#4ade80"></span>Orgânico 42%</span>
+              <span><span class="legend-dot" style="background:#60a5fa"></span>Direto 25%</span>
+              <span><span class="legend-dot" style="background:#f59e0b"></span>Social 18%</span>
+              <span><span class="legend-dot" style="background:#ef4444"></span>Pago 15%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Row -->
+      <div class="charts-row">
+        <div class="chart-card">
+          <h3>Páginas mais visitadas</h3>
+          <table class="mini-table"><thead><tr><th>Página</th><th>Views</th><th>%</th></tr></thead><tbody id="topPages"></tbody></table>
+        </div>
+        <div class="chart-card">
+          <h3>Dispositivos</h3>
+          <div id="deviceBars" style="margin-top:1rem"></div>
+          <h3 style="margin-top:1.5rem">Países</h3>
+          <div id="countryList" style="margin-top:0.5rem"></div>
+        </div>
+      </div>
+
+      <!-- Traffic Sources -->
+      <div class="chart-card" style="margin-top:1rem">
+        <h3>Fontes de tráfego</h3>
+        <div id="trafficBars" style="margin-top:1rem"></div>
+      </div>
+
+      <!-- Content summary -->
+      <div class="metrics-grid" style="margin-top:1.5rem">
+        <div class="metric-card"><h3>Artigos</h3><div class="metric-value" id="metricArticles">0</div></div>
+        <div class="metric-card"><h3>Vídeos</h3><div class="metric-value" id="metricVideos">0</div></div>
+        <div class="metric-card"><h3>Notícias</h3><div class="metric-value" id="metricNews">0</div></div>
+      </div>
+    </div>
+
+    <!-- ===== ARTICLES ===== -->
+    <div id="articlesSection" class="hidden">
+      <div class="header"><h1>Artigos</h1><button class="btn btn-primary" onclick="openEditor('article')">+ Novo Artigo</button></div>
+      <div class="table-container"><table><thead><tr><th>Título</th><th>Autor</th><th>Categoria</th><th>Status</th><th>Ações</th></tr></thead><tbody id="articlesList"></tbody></table></div>
+    </div>
+
+    <!-- ===== VIDEOS ===== -->
+    <div id="videosSection" class="hidden">
+      <div class="header"><h1>Vídeos</h1><button class="btn btn-primary" onclick="openEditor('video')">+ Novo Vídeo</button></div>
+      <div class="table-container"><table><thead><tr><th>Título</th><th>Autor</th><th>Categoria</th><th>Status</th><th>Ações</th></tr></thead><tbody id="videosList"></tbody></table></div>
+    </div>
+
+    <!-- ===== NEWS ===== -->
+    <div id="newsSection" class="hidden">
+      <div class="header"><h1>Notícias</h1><button class="btn btn-primary" onclick="openEditor('news')">+ Nova Notícia</button></div>
+      <div class="table-container"><table><thead><tr><th>Título</th><th>Autor</th><th>Status</th><th>Data</th><th>Ações</th></tr></thead><tbody id="newsList"></tbody></table></div>
+    </div>
+
+    <!-- ===== PARTNERS ===== -->
+    <div id="partnersSection" class="hidden">
+      <div class="header">
+        <h1>Parceiros & Apoio</h1>
+        <div style="display:flex; gap:10px;">
+          <button class="btn btn-primary" onclick="openPartnerEditor('sponsor')">+ Novo Patrocinador</button>
+          <button class="btn btn-primary" onclick="openPartnerEditor('supporter')">+ Novo Apoiador</button>
+        </div>
+      </div>
+      
+      <div style="display:grid; grid-template-columns: 1fr; gap: 30px;">
+        <div class="table-container">
+          <h3 style="padding: 15px; background: #1a1a1a; margin: 0; color: #fff; border-bottom: 1px solid #333;">🏢 Patrocinadores (Empresas)</h3>
+          <table>
+            <thead>
+              <tr><th>Nome</th><th>Descrição</th><th>Nível</th><th>Instagram</th><th>Website</th><th>Status</th><th>Ações</th></tr>
+            </thead>
+            <tbody id="sponsorsList"></tbody>
+          </table>
+        </div>
+
+        <div class="table-container">
+          <h3 style="padding: 15px; background: #1a1a1a; margin: 0; color: #fff; border-bottom: 1px solid #333;">👤 Apoiadores (Individuais)</h3>
+          <table>
+            <thead>
+              <tr><th>Nome</th><th>Descrição</th><th>Nível</th><th>Instagram</th><th>Website</th><th>Status</th><th>Ações</th></tr>
+            </thead>
+            <tbody id="supportersList"></tbody>
+          </table>
+        </div>
+
+        <div class="table-container">
+          <div style="padding: 15px; background: #1a1a1a; margin: 0; color: #fff; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin:0;">📱 Redes Sociais da Página /apoie</h3>
+            <button class="btn btn-sm" onclick="addSocialLink()">+ Adicionar</button>
+          </div>
+          <div id="socialLinksEditor" style="padding: 15px;"></div>
+          <div style="padding: 10px 15px; border-top: 1px solid #333;">
+            <button class="btn btn-primary" onclick="saveSocialLinks()">Salvar Redes Sociais</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== MODERATION ===== -->
+    <div id="moderationSection" class="hidden">
+      <div class="header"><h1>Moderação</h1></div>
+      <div class="table-container"><table><thead><tr><th>Autor</th><th>Comentário</th><th>Conteúdo</th><th>Data</th><th>Ações</th></tr></thead><tbody id="commentsList"></tbody></table></div>
+    </div>
+
+    <!-- ===== USERS ===== -->
+    <div id="usersSection" class="hidden">
+      <div class="header"><h1>Usuários</h1><button class="btn btn-primary" onclick="showUserModal()">+ Novo Usuário</button></div>
+      <div class="table-container"><table><thead><tr><th>Nome Completo</th><th>Usuário</th><th>Função</th><th>Criado</th><th>Ações</th></tr></thead><tbody id="usersList"></tbody></table></div>
+    </div>
+
+    <!-- ===== INBOX ===== -->
+    <div id="inboxSection" class="hidden">
+      <div class="header"><h1>Caixa de Entrada</h1></div>
+      <div class="inbox-container" style="display:grid;grid-template-columns:350px 1fr;gap:20px;height:calc(100vh - 150px);">
+        <div class="message-list-panel" style="background:#111;border-radius:12px;overflow-y:auto;border:1px solid #1e1e1e">
+          <div id="messageList"></div>
+        </div>
+        <div class="message-detail-panel" style="background:#111;border-radius:12px;padding:30px;border:1px solid #1e1e1e;display:flex;flex-direction:column;">
+          <div id="messageDetailContent" style="flex:1">
+            <p style="color:#666;text-align:center;margin-top:100px;">Selecione uma mensagem para ler</p>
+          </div>
+          <div id="messageDetailActions" style="margin-top:20px;display:none;gap:10px;">
+            <button class="btn btn-secondary" onclick="markMessageUnread()">Marcar como não lida</button>
+            <button class="btn btn-danger" onclick="deleteMessage()">Excluir Mensagem</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== FULL-PAGE EDITOR ===== -->
+    <div id="editorSection" class="hidden">
+      <div class="editor-topbar">
+        <button class="btn btn-secondary" onclick="closeEditor()">← Voltar</button>
+        <h2 id="editorTitle">Novo Conteúdo</h2>
+        <div class="editor-topbar-actions">
+          <div class="type-tabs">
+            <button class="type-tab active" data-type="article" onclick="openEditor('article',editingId)">📝 Artigo</button>
+            <button class="type-tab" data-type="video" onclick="openEditor('video',editingId)">🎬 Vídeo</button>
+            <button class="type-tab" data-type="news" onclick="openEditor('news',editingId)">📰 Notícia</button>
+            <button class="type-tab" data-type="user" onclick="openEditor('user',editingId)">👤 Usuário</button>
+          </div>
+          <button class="btn btn-primary" onclick="saveEditor()">Salvar</button>
+        </div>
+      </div>
+      <form id="editorForm" class="editor-body" onsubmit="event.preventDefault();saveEditor()">
+        <div class="editor-main">
+          <div class="form-group"><label>Título</label><input type="text" name="title" required placeholder="Título do conteúdo"></div>
+          <div id="articleFields">
+            <div class="form-group"><label>Excerpt</label><input type="text" name="excerpt" placeholder="Resumo curto"></div>
+            <div class="form-group">
+              <label>Foto de Capa</label>
+              <div style="display:flex;gap:10px;align-items:center;">
+                <input type="text" name="image_url" id="imagemCapaUrl" placeholder="https://... ou use o botão ao lado" style="flex:1">
+                <button type="button" class="btn btn-secondary" onclick="document.getElementById('coverImageInput').click()">📷 Upload</button>
+                <input type="file" id="coverImageInput" style="display:none" accept="image/*" onchange="uploadCoverImage(this)">
+              </div>
+              <div id="coverPreview" style="margin-top:10px;display:none;">
+                <img id="coverPreviewImg" src="" alt="Pré-visualização" style="max-height:160px;border-radius:8px;border:1px solid #333;object-fit:cover;width:100%;">
+              </div>
+            </div>
+          </div>
+
+          <div id="videoFields" style="display:none">
+            <div class="form-group"><label>URL do Vídeo (YouTube)</label><input type="text" name="video_url" placeholder="https://youtube.com/watch?v=..."></div>
+            <div class="form-group"><label>Thumbnail</label><input type="text" name="thumbnail_url" placeholder="Auto-gerada do YouTube"></div>
+          </div>
+          <div id="userFields" style="display:none">
+            <div class="form-group"><label>Usuário (Login)</label><input type="text" name="username" placeholder="ex: ricardo"></div>
+            <div class="form-group"><label>Senha <span id="passwordHelp" style="font-size:0.8em;color:#888;">(Deixe em branco para manter)</span></label><input type="password" name="password" placeholder="Nova senha"></div>
+            <div class="form-group">
+                <label>Foto do Perfil</label>
+                <div style="display:flex;gap:10px;">
+                    <input type="text" name="photo_url" placeholder="https://..." style="flex:1">
+                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('photoInput').click()">Upload Foto</button>
+                    <input type="file" id="photoInput" style="display:none" accept="image/*" onchange="uploadPhoto(this)">
+                </div>
+            </div>
+            <div class="form-group" style="flex-direction:row;align-items:center;gap:10px;"><input type="checkbox" name="show_on_contact" id="showOnContactField" value="1" style="width:auto;"><label for="showOnContactField" style="margin-bottom:0;cursor:pointer">Exibir na página de Contato</label></div>
+          </div>
+          <div class="form-group"><label id="contentLabel">Conteúdo</label><div id="richEditor"></div></div>
+        </div>
+        <div class="editor-sidebar">
+          <div class="form-group"><label id="authorLabel">Autor</label><input type="text" name="author" placeholder="Nome do autor"></div>
+          <div id="userSidebarFields" style="display:none">
+             <div class="form-group"><label>Função / Cargo</label><input type="text" name="role_name" placeholder="Ex: Cinéfilo, Criador de Conteúdo"></div>
+             <div class="form-group">
+               <label>🔴 YouTube</label>
+               <input type="text" id="link_youtube" placeholder="https://youtube.com/@seucanal">
+             </div>
+             <div class="form-group">
+               <label>📸 Instagram</label>
+               <input type="text" id="link_instagram" placeholder="https://instagram.com/seuperfil">
+             </div>
+             <div class="form-group">
+               <label>📘 Facebook</label>
+               <input type="text" id="link_facebook" placeholder="https://facebook.com/seuperfil">
+             </div>
+             <div class="form-group">
+               <label>✉️ Email de contato</label>
+               <input type="text" id="link_email" placeholder="seu@email.com">
+             </div>
+             <!-- Hidden field that stores JSON for the API -->
+             <input type="hidden" name="links" id="linksHidden">
+          </div>
+          <div class="form-group" id="categoryGroup"><label>Categoria</label><input type="text" name="category" placeholder="Ex: Cinema, Análise"></div>
+          <div class="form-group" id="statusGroup"><label>Status</label><select name="status"><option value="draft">Rascunho</option><option value="published">Publicado</option></select></div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- ===== PARTNER MODAL ===== -->
+  <div id="partnerModal" class="modal-overlay hidden">
+    <div class="modal" style="max-width: 550px; max-height: 85vh; overflow-y: auto;">
+      <div class="modal-header">
+        <h2 id="partnerModalTitle" style="margin-bottom: 20px;">Novo Parceiro</h2>
+        <button class="modal-close" onclick="closePartnerModal()" style="position: absolute; right: 20px; top: 20px; background: none; border: none; color: #888; font-size: 1.5rem; cursor: pointer;">&times;</button>
+      </div>
+      <form id="partnerForm" onsubmit="event.preventDefault(); savePartner()">
+        <input type="hidden" id="partnerId">
+        <input type="hidden" id="partnerType">
+        
+        <div class="form-group">
+          <label id="partnerNameLabel">Nome / Empresa</label>
+          <input type="text" id="partnerName" class="form-input" required>
+        </div>
+
+        <div class="form-group">
+          <label>Descrição</label>
+          <input type="text" id="partnerDescription" class="form-input" placeholder="Ex: Patrocinador master desde 2003">
+        </div>
+        
+        <div class="form-group">
+          <label id="partnerImageLabel">URL da Logomarca/Foto</label>
+          <div style="display:flex; gap:10px;">
+            <input type="text" id="partnerImage" class="form-input" placeholder="/uploads/..." style="flex:1">
+            <button type="button" class="btn btn-secondary" onclick="document.getElementById('partnerImageFile').click()">Subir</button>
+            <input type="file" id="partnerImageFile" style="display:none" accept="image/*" onchange="uploadPartnerImage(this)">
+          </div>
+          <div id="partnerImagePreview" style="margin-top:10px;display:none;">
+            <img id="partnerImagePreviewImg" src="" style="max-height:80px;border-radius:8px;border:1px solid #333;object-fit:contain;">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Nível (Tier)</label>
+          <select id="partnerTier" class="form-input">
+            <option value="Platinum">Platinum</option>
+            <option value="Gold">Gold</option>
+            <option value="Silver">Silver</option>
+            <option value="Bronze">Bronze</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>📸 Instagram</label>
+          <input type="text" id="partnerInstagram" class="form-input" placeholder="@usuario ou link">
+        </div>
+
+        <div class="form-group">
+          <label>🌐 Website</label>
+          <input type="text" id="partnerWebsite" class="form-input" placeholder="https://exemplo.com.br">
+        </div>
+
+        <div class="form-group">
+          <label>Status</label>
+          <select id="partnerStatus" class="form-input">
+            <option value="active">Ativo</option>
+            <option value="inactive">Inativo</option>
+          </select>
+        </div>
+
+        <div class="modal-footer" style="margin-top:20px; display:flex; justify-content:flex-end; gap:10px;">
+          <button type="button" class="btn btn-secondary" onclick="closePartnerModal()">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar Parceiro</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/admin-app.js"></script>
+</body>
+</html>
