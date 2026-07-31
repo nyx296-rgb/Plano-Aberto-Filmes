@@ -465,15 +465,16 @@ async function renderContact() {
         </div>
 
         <!-- Founders Cards -->
-        <div style="max-width: 1200px; margin: 0 auto; padding: 4rem 1rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem;">
+        <div style="max-width: 1200px; margin: 0 auto; padding: 4rem 1rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(350px, 100%), 1fr)); gap: 2rem;">
             ${cardsHtml}
         </div>
 
         <!-- Contact Form -->
         <div style="max-width: 900px; margin: 0 auto; padding: 2rem 1rem 6rem;">
-            <div style="background: #0d0d0d; border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 16px; padding: 3rem;">
+            <div class="responsive-form-card" style="border: 1px solid rgba(245, 158, 11, 0.2);">
                 <h2 style="font-size: 2.25rem; font-weight: 800; color: #fbbf24; margin-bottom: 2rem;">Envie uma Mensagem</h2>
                 <form onsubmit="handleContact(event, this)" style="display: flex; flex-direction: column; gap: 1.5rem;">
+
                     <div>
                         <label style="display: block; font-size: 0.875rem; font-weight: 500; color: #d1d5db; margin-bottom: 0.5rem;">Seu Nome</label>
                         <input type="text" name="name" placeholder="Digite seu nome" required class="contact-input-premium">
@@ -636,15 +637,16 @@ async function renderSponsors() {
 
             <!-- Sponsor Contact Form -->
             <div style="max-width: 800px; margin: 0 auto;">
-                <div style="background: #0d0d0d; border: 1px solid rgba(229, 9, 20, 0.2); border-radius: 20px; padding: 3.5rem; box-shadow: 0 20px 40px -20px rgba(229,9,20,0.2);">
+                <div class="responsive-form-card" style="border: 1px solid rgba(229, 9, 20, 0.2); box-shadow: 0 20px 40px -20px rgba(229,9,20,0.2);">
                     <div style="text-align:center;margin-bottom:2.5rem;">
                         <h2 style="font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 0.75rem;">Seja um Patrocinador</h2>
                         <p style="color: #888; font-size: 1.1rem;">Deseja associar sua marca ao Plano Aberto Filmes? Envie sua proposta abaixo.</p>
                     </div>
                     <form onsubmit="handleSponsorMessage(event, this)" style="display: flex; flex-direction: column; gap: 1.5rem;">
-                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+                        <div class="responsive-form-grid">
                             <div>
                                 <label style="display: block; font-size: 0.875rem; font-weight: 600; color: #aaa; margin-bottom: 0.5rem;">Nome da Empresa / Contato</label>
+
                                 <input type="text" name="name" placeholder="Ex: Cinema Tech" required class="contact-input-premium">
                             </div>
                             <div>
@@ -762,8 +764,9 @@ function renderCommentForm(type, id, parentId = null, placeholder = '') {
         ${!isReply ? '<h3 style="margin-bottom:1.25rem;font-size:1.1rem;font-weight:700;">Deixe um comentário</h3>' : ''}
         <form onsubmit="handleComment(event,'${type}','${id}')" class="comment-form">
             ${replyInput}
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.75rem;">
+            <div class="responsive-form-grid" style="gap:0.75rem;margin-bottom:0.75rem;">
                 <input type="text" name="name" placeholder="${escHtml(placeholder || 'Seu nome')}" required class="comment-input">
+
                 <input type="email" name="email" placeholder="E-mail (opcional)" class="comment-input">
             </div>
             <textarea name="content" placeholder="Escreva seu comentário..." required rows="3" class="comment-input" style="width:100%;resize:vertical;"></textarea>
