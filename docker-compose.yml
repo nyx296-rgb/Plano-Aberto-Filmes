@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: plano_aberto_app
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./db:/app/db
+      - ./public/uploads:/app/public/uploads
+    environment:
+      - PORT=8080
+      - JWT_SECRET=bfc27ff415f205f39e95b0f83ed00e8205aae10d7a6617a9cfc31a0a9035af3e0a1031518e35ff68bcee911c8f69fead793d1cefa9eb2ec42557593e7add7986
+    restart: always
