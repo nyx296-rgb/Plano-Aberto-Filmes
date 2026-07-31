@@ -28,6 +28,7 @@ const userRoutes = require('./routes/users');
 const contentRoutes = require('./routes/content');
 
 const app = express();
+app.enable('trust proxy');
 const PORT = process.env.PORT || 8080;
 const IP = process.env.IP || '0.0.0.0';
 
@@ -56,6 +57,16 @@ function escapeHtml(str) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+}
+
+function getAbsoluteUrl(urlPath, req) {
+  if (!urlPath) return '';
+  if (urlPath.startsWith('http://') || urlPath.startsWith('https://')) {
+    return urlPath;
+  }
+  const host = req.get('host');
+  const protocol = req.protocol;
+  return `${protocol}://${host}${urlPath.startsWith('/') ? '' : '/'}${urlPath}`;
 }
 
 // Global Request Logger
@@ -232,17 +243,18 @@ app.get(['/articles/:slug', '/news/:slug'], (req, res) => {
   let ogTags = '';
   if (item) {
     if (item.image_url) ogImage = item.image_url;
+    const absoluteOgImage = getAbsoluteUrl(ogImage, req);
     const desc = (item.excerpt || item.title || '').substring(0, 160);
     ogTags = `
   <meta property="og:title" content="${escapeHtml(item.title)}" />
   <meta property="og:description" content="${escapeHtml(desc)}" />
-  <meta property="og:image" content="${escapeHtml(ogImage)}" />
+  <meta property="og:image" content="${escapeHtml(absoluteOgImage)}" />
   <meta property="og:url" content="${req.protocol}://${req.get('host')}${req.originalUrl}" />
   <meta property="og:type" content="article" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="${escapeHtml(item.title)}" />
   <meta name="twitter:description" content="${escapeHtml(desc)}" />
-  <meta name="twitter:image" content="${escapeHtml(ogImage)}" />`;
+  <meta name="twitter:image" content="${escapeHtml(absoluteOgImage)}" />`;
   }
 
   const patched = indexHtml.replace('</head>', `${ogTags}\n</head>`);
@@ -272,17 +284,18 @@ app.get('/videos/:slug', (req, res) => {
   let ogTags = '';
   if (item) {
     if (item.thumbnail_url) ogImage = item.thumbnail_url;
+    const absoluteOgImage = getAbsoluteUrl(ogImage, req);
     const desc = (item.description ? item.description.replace(/<[^>]+>/g, '') : item.title || '').substring(0, 160);
     ogTags = `
   <meta property="og:title" content="${escapeHtml(item.title)}" />
   <meta property="og:description" content="${escapeHtml(desc)}" />
-  <meta property="og:image" content="${escapeHtml(ogImage)}" />
+  <meta property="og:image" content="${escapeHtml(absoluteOgImage)}" />
   <meta property="og:url" content="${req.protocol}://${req.get('host')}${req.originalUrl}" />
   <meta property="og:type" content="video.other" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="${escapeHtml(item.title)}" />
   <meta name="twitter:description" content="${escapeHtml(desc)}" />
-  <meta name="twitter:image" content="${escapeHtml(ogImage)}" />`;
+  <meta name="twitter:image" content="${escapeHtml(absoluteOgImage)}" />`;
   }
 
   const patched = indexHtml.replace('</head>', `${ogTags}\n</head>`);
