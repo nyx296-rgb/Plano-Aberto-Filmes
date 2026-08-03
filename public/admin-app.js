@@ -272,7 +272,7 @@ async function loadModeration() {
           ` : `
             <span class="status-badge status-${c.status === 'approved' ? 'published' : 'draft'}">${c.status}</span>
           `}
-          ${currentUser.role === 'admin' ? `<button class="btn btn-sm btn-danger" onclick="deleteComment(${c.id})">Excluir</button>` : ''}
+          ${currentUser.role === 'admin' || currentUser.role === 'editor' ? `<button class="btn btn-sm btn-danger" onclick="deleteComment(${c.id})">Excluir</button>` : ''}
         </td>
       </tr>
     `;

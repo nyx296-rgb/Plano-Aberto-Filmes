@@ -142,28 +142,31 @@ router.put('/comment/:id', (req, res) => {
   res.json({ success: true });
 });
 
-// Edit a comment (owner or admin)
+// Edit a comment (owner, admin or editor)
 router.put('/comments/:id', authenticateToken, (req, res) => {
   const { content } = req.body;
   const comment = db.prepare('SELECT * FROM comments WHERE id = ?').get(req.params.id);
   if (!comment) return res.status(404).json({ error: 'Comment not found' });
-  if (req.user.role !== 'admin' && req.user.id !== comment.user_id) {
+  const canModerate = req.user.role === 'admin' || req.user.role === 'editor';
+  if (!canModerate && req.user.id !== comment.user_id) {
     return res.status(403).json({ error: 'Access denied' });
   }
   db.prepare('UPDATE comments SET content = ? WHERE id = ?').run(content, req.params.id);
   res.json({ success: true });
 });
 
-// Delete a comment (owner or admin)
+// Delete a comment (owner, admin or editor)
 router.delete('/comments/:id', authenticateToken, (req, res) => {
   const comment = db.prepare('SELECT * FROM comments WHERE id = ?').get(req.params.id);
   if (!comment) return res.status(404).json({ error: 'Comment not found' });
   
-  if (comment.status === 'approved' && req.user.role !== 'admin') {
+  const canModerate = req.user.role === 'admin' || req.user.role === 'editor';
+
+  if (comment.status === 'approved' && !canModerate) {
     return res.status(403).json({ error: 'Somente administradores podem deletar comentários aprovados.' });
   }
 
-  if (req.user.role !== 'admin' && req.user.id !== comment.user_id) {
+  if (!canModerate && req.user.id !== comment.user_id) {
     return res.status(403).json({ error: 'Access denied' });
   }
   
@@ -202,9 +205,9 @@ router.get('/comments', authenticateToken, (req, res) => {
   res.json(comments);
 });
 
-// Admin moderate comment
+// Admin moderate comment (admin + editors can moderate)
 router.post('/comments/:id/moderate', authenticateToken, (req, res) => {
-  if (req.user.role !== 'admin') {
+  if (req.user.role !== 'admin' && req.user.role !== 'editor') {
     return res.status(403).json({ error: 'Admin access required' });
   }
   const { status } = req.body;
