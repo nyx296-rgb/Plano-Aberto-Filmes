@@ -86,8 +86,8 @@ async function loadAnalytics() {
   } catch(e) { console.error('Analytics error:', e); }
   // Also load content counts
   try {
-    const arts = await apiCall('/api/content/articles');
-    const vids = await apiCall('/api/content/videos');
+    const arts = await apiCall('/api/content/admin/articles');
+    const vids = await apiCall('/api/content/admin/videos');
     const metricArts = arts.filter(a => a.category !== 'Notícias').length;
     const metricNews = arts.filter(a => a.category === 'Notícias').length;
     document.getElementById('metricArticles').textContent = metricArts;
@@ -228,19 +228,19 @@ function renderTrafficSources(sources) {
 // CONTENT LISTS
 // ========================================
 async function loadArticles() {
-  const articles = await apiCall('/api/content/articles');
+  const articles = await apiCall('/api/content/admin/articles');
   const filtered = articles.filter(a => a.category !== 'Notícias');
   document.getElementById('articlesList').innerHTML = filtered.map(a => `<tr><td>${a.title}</td><td>${a.author||'-'}</td><td>${a.category||'-'}</td><td><span class="status-badge status-${a.status}">${a.status==='published'?'Publicado':'Rascunho'}</span></td><td class="actions"><button class="btn btn-sm" onclick="openEditor('article',${a.id})">Editar</button><button class="btn btn-sm btn-danger" onclick="deleteArticle(${a.id})">Excluir</button></td></tr>`).join('') || '<tr><td colspan="5" class="empty-state">Nenhum artigo</td></tr>';
 }
 
 async function loadNews() {
-  const articles = await apiCall('/api/content/articles');
+  const articles = await apiCall('/api/content/admin/articles');
   const news = articles.filter(a => a.category === 'Notícias');
   document.getElementById('newsList').innerHTML = news.map(a => `<tr><td>${a.title}</td><td>${a.author||'-'}</td><td><span class="status-badge status-${a.status}">${a.status==='published'?'Publicado':'Rascunho'}</span></td><td>${formatDate(a.created_at)}</td><td class="actions"><button class="btn btn-sm" onclick="openEditor('news',${a.id})">Editar</button><button class="btn btn-sm btn-danger" onclick="deleteNews(${a.id})">Excluir</button></td></tr>`).join('') || '<tr><td colspan="5" class="empty-state">Nenhuma notícia</td></tr>';
 }
 
 async function loadVideos() {
-  const videos = await apiCall('/api/content/videos');
+  const videos = await apiCall('/api/content/admin/videos');
   document.getElementById('videosList').innerHTML = videos.map(v => `<tr><td>${v.title}</td><td>${v.author||'-'}</td><td>${v.category||'-'}</td><td><span class="status-badge status-${v.status}">${v.status==='published'?'Publicado':'Rascunho'}</span></td><td class="actions"><button class="btn btn-sm" onclick="openEditor('video',${v.id})">Editar</button><button class="btn btn-sm btn-danger" onclick="deleteVideo(${v.id})">Excluir</button></td></tr>`).join('') || '<tr><td colspan="5" class="empty-state">Nenhum vídeo</td></tr>';
 }
 

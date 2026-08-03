@@ -261,6 +261,7 @@ async function renderArticle(id) {
                     <time>${formatDate(a.created_at)}</time>
                 </div>
                 <h1 class="article-title">${escHtml(a.title)}</h1>
+                ${a.excerpt ? `<p class="article-subtitle" style="font-size:1.25rem;color:#a3a3a3;margin-top:0.75rem;font-style:italic;">${escHtml(a.excerpt)}</p>` : ''}
                 <div class="article-meta">
                     <span>Por <strong>${escHtml(a.author || 'Redação')}</strong></span>
                     <span id="like-counter-article-${id}">♥ ${stats.likes} curtidas</span>

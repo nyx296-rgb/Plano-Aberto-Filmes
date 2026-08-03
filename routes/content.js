@@ -158,6 +158,17 @@ router.delete('/videos/:id', authenticateToken, (req, res) => {
   res.json({ message: 'Video deleted' });
 });
 
+// Admin: listar todo o conteúdo (incluindo rascunhos)
+router.get('/admin/articles', authenticateToken, (req, res) => {
+  const articles = db.prepare('SELECT * FROM articles ORDER BY created_at DESC').all();
+  res.json(articles);
+});
+
+router.get('/admin/videos', authenticateToken, (req, res) => {
+  const videos = db.prepare('SELECT * FROM videos ORDER BY created_at DESC').all();
+  res.json(videos);
+});
+
 router.get('/categories', (req, res) => {
   const categories = db.prepare('SELECT * FROM categories ORDER BY name').all();
   res.json(categories);
