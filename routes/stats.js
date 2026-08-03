@@ -218,6 +218,23 @@ router.post('/comments/:id/moderate', authenticateToken, (req, res) => {
   res.json({ success: true });
 });
 
+// Admin reassociate comments to correct content
+router.post('/comments/reassociate', authenticateToken, (req, res) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'Admin access required' });
+  }
+  const { old_content_id, new_content_id, content_type } = req.body;
+  if (!old_content_id || !new_content_id) {
+    return res.status(400).json({ error: 'old_content_id and new_content_id required' });
+  }
+  const type = content_type || 'article';
+  if (type !== 'article' && type !== 'video') {
+    return res.status(400).json({ error: 'content_type must be article or video' });
+  }
+  const result = db.prepare('UPDATE comments SET content_id = ? WHERE content_id = ? AND content_type = ?').run(new_content_id, old_content_id, type);
+  res.json({ success: true, updated: result.changes });
+});
+
 // Detailed analytics for admin dashboard
 router.get('/analytics', authenticateToken, (req, res) => {
   const period = req.query.period || '7';

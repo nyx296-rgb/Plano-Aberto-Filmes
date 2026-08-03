@@ -291,6 +291,16 @@ async function deleteComment(id) {
   loadModeration();
 }
 
+async function reassociateComments(oldId, newId, type) {
+  if (!confirm(`Mover todos os comentários de ${type} ID ${oldId} para ID ${newId}?`)) return;
+  const result = await apiCall('/api/stats/comments/reassociate', {
+    method: 'POST',
+    body: JSON.stringify({ old_content_id: oldId, new_content_id: newId, content_type: type })
+  });
+  showToast(`${result.updated} comentário(s) reassociado(s)!`);
+  loadModeration();
+}
+
 async function loadUsers() {
   // Editors can only see and edit their own profile
   if (currentUser.role !== 'admin') {

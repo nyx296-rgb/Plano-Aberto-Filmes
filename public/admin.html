@@ -198,6 +198,27 @@
     <!-- ===== MODERATION ===== -->
     <div id="moderationSection" class="hidden">
       <div class="header"><h1>Moderação</h1></div>
+      <div style="background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:15px;margin-bottom:20px;">
+        <h3 style="margin:0 0 10px 0;font-size:0.9rem;color:#999;">Reassociar Comentários</h3>
+        <div style="display:flex;gap:10px;align-items:end;flex-wrap:wrap;">
+          <div>
+            <label style="font-size:0.8rem;color:#666;display:block;margin-bottom:4px;">ID Atual (origem)</label>
+            <input type="number" id="reassocOldId" placeholder="ex: 18" style="background:#111;border:1px solid #333;color:#fff;padding:6px 10px;border-radius:4px;width:100px;">
+          </div>
+          <div>
+            <label style="font-size:0.8rem;color:#666;display:block;margin-bottom:4px;">ID Novo (destino)</label>
+            <input type="number" id="reassocNewId" placeholder="ex: 22" style="background:#111;border:1px solid #333;color:#fff;padding:6px 10px;border-radius:4px;width:100px;">
+          </div>
+          <div>
+            <label style="font-size:0.8rem;color:#666;display:block;margin-bottom:4px;">Tipo</label>
+            <select id="reassocType" style="background:#111;border:1px solid #333;color:#fff;padding:6px 10px;border-radius:4px;">
+              <option value="article">Artigo</option>
+              <option value="video">Vídeo</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" onclick="reassociateComments(document.getElementById('reassocOldId').value, document.getElementById('reassocNewId').value, document.getElementById('reassocType').value)">Mover Comentários</button>
+        </div>
+      </div>
       <div class="table-container"><table><thead><tr><th>Autor</th><th>Comentário</th><th>Conteúdo</th><th>Data</th><th>Ações</th></tr></thead><tbody id="commentsList"></tbody></table></div>
     </div>
 
