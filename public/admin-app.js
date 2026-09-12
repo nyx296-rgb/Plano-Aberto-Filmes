@@ -97,7 +97,7 @@ async function loadAnalytics() {
     drawDonutChart(a.channels);
     renderTopPages(a.topPages);
     renderDevices(a.devices);
-    renderCountries(a.countries);
+    renderCountries(a.countries, a.cityMarkers || []);
     renderTrafficSources(a.trafficSources);
   } catch(e) { console.error('Analytics error:', e); }
   // Also load content counts
@@ -227,7 +227,11 @@ function renderDevices(dev) {
 
 // ---- Countries ----
 let jvmMap = null;
+<<<<<<< HEAD
 function renderCountries(countries) {
+=======
+function renderCountries(countries, cityMarkers) {
+>>>>>>> 7470d5f ( Please enter the commit message for your changes. Lines starting)
   const el = document.getElementById('countryList');
   if (el) {
     el.innerHTML = countries.map(c => `<div class="country-row"><span>${c.name}</span><span class="country-pct">${c.pct}%</span></div>`).join('');
@@ -236,17 +240,45 @@ function renderCountries(countries) {
   // Render Map
   const mapEl = document.getElementById('worldMap');
   if (!mapEl) return;
+<<<<<<< HEAD
   
   const mapData = {};
   countries.forEach(c => {
     // We expect c.id to be the 2-letter ISO code returned by geoip-lite
     if(c.id && c.id.length === 2) {
+=======
+
+  // Country-level coloring data
+  const mapData = {};
+  countries.forEach(c => {
+    if (c.id && c.id.length === 2) {
+>>>>>>> 7470d5f ( Please enter the commit message for your changes. Lines starting)
       mapData[c.id.toUpperCase()] = c.count || c.pct;
     }
   });
 
+<<<<<<< HEAD
   if (jvmMap) {
     mapEl.innerHTML = ''; // Recreate on update
+=======
+  // City-level markers
+  const markers = (cityMarkers || []).map(m => ({
+    name: m.name,
+    coords: m.coords,
+    count: m.count
+  }));
+
+  // Scale marker size by count (min 4, max 20)
+  const maxCount = markers.reduce((a, b) => Math.max(a, b.count), 1);
+  const markerStyle = markers.map(m => ({
+    fill: '#e50914',
+    r: Math.max(4, Math.round((m.count / maxCount) * 20))
+  }));
+
+  if (jvmMap) {
+    mapEl.innerHTML = ''; // Recreate on update
+    jvmMap = null;
+>>>>>>> 7470d5f ( Please enter the commit message for your changes. Lines starting)
   }
 
   jvmMap = new jsVectorMap({
@@ -254,6 +286,7 @@ function renderCountries(countries) {
     map: 'world',
     backgroundColor: 'transparent',
     regionStyle: {
+<<<<<<< HEAD
       initial: {
         fill: '#222222',
         stroke: '#333',
@@ -277,6 +310,50 @@ function renderCountries(countries) {
       );
     }
   });
+=======
+      initial: { fill: '#222222', stroke: '#333', strokeWidth: 0.5, fillOpacity: 1 },
+      hover: { fill: '#334155' }
+    },
+    visualizeData: {
+      scale: ['#2d1a1a', '#8b1a1a'],
+      values: mapData
+    },
+    markers: markers,
+    markerStyle: {
+      initial: { fill: '#e50914', stroke: '#fff', strokeWidth: 1, r: 6, fillOpacity: 0.85 },
+      hover: { fill: '#ff4d4d', strokeWidth: 2 }
+    },
+    markerLabelStyle: { initial: { display: 'none' } },
+    ...(markerStyle.length > 0 ? { markersSelectableOne: false } : {}),
+    onRegionTooltipShow(event, tooltip, code) {
+      const value = mapData[code] || 0;
+      const label = tooltip.text ? tooltip.text() : code;
+      if (value > 0) {
+        tooltip.css({ backgroundColor: '#1a1a2e', border: '1px solid #333', color: '#fff', padding: '6px 10px', borderRadius: '6px', fontSize: '13px' });
+        tooltip.text(`${label}: ${value} acesso${value !== 1 ? 's' : ''}`, false);
+      }
+    },
+    onMarkerTooltipShow(event, tooltip, index) {
+      const m = markers[index];
+      if (m) {
+        tooltip.css({ backgroundColor: '#1a1a2e', border: '1px solid #e50914', color: '#fff', padding: '8px 12px', borderRadius: '8px', fontSize: '13px', fontFamily: 'Outfit, sans-serif' });
+        tooltip.text(`📍 ${m.name}\n${m.count} acesso${m.count !== 1 ? 's' : ''}`, false);
+      }
+    }
+  });
+
+  // Render legend below map
+  const legendEl = document.getElementById('mapLegend');
+  if (legendEl) {
+    const top5 = countries.slice(0, 5);
+    legendEl.innerHTML = top5.map(c => `
+      <span style="display:flex; align-items:center; gap:5px;">
+        <span style="width:10px;height:10px;border-radius:50%;background:#e50914;"></span>
+        ${c.name}: <strong>${c.count}</strong>
+      </span>
+    `).join('');
+  }
+>>>>>>> 7470d5f ( Please enter the commit message for your changes. Lines starting)
 }
 
 // ---- Traffic Sources ----

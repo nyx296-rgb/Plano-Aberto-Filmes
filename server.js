@@ -93,9 +93,21 @@ app.use((req, res, next) => {
   
   const geo = geoip.lookup(clientIp === '127.0.0.1' || clientIp === '::1' ? '177.10.133.51' : clientIp); // fallback to BR IP for local testing
   const country = geo ? geo.country : 'Unknown';
+<<<<<<< HEAD
   
   try {
     db.prepare('INSERT INTO page_views (path, ip_hash, user_agent, country) VALUES (?, ?, ?, ?)').run(req.path || '/', ip_hash, user_agent, country);
+=======
+  const region = geo ? geo.region : null;
+  const city = geo ? geo.city : null;
+  const lat = geo && geo.ll ? geo.ll[0] : null;
+  const lon = geo && geo.ll ? geo.ll[1] : null;
+  
+  try {
+    db.prepare('INSERT INTO page_views (path, ip_hash, user_agent, country, region, city, lat, lon) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').run(
+      req.path || '/', ip_hash, user_agent, country, region, city, lat, lon
+    );
+>>>>>>> 7470d5f ( Please enter the commit message for your changes. Lines starting)
   } catch (e) {
     console.error('Analytics error:', e.message);
   }

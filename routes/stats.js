@@ -343,11 +343,51 @@ router.get('/analytics', authenticateToken, (req, res) => {
     countries = mapped.map(c => ({
       id: c.id,
       name: c.name,
+<<<<<<< HEAD
+=======
+      count: c.count,
+>>>>>>> 7470d5f ( Please enter the commit message for your changes. Lines starting)
       pct: Math.round((c.count / (totalCountryViews || 1)) * 100)
     }));
   } catch (e) {
     console.error('Error fetching countries:', e);
   }
+<<<<<<< HEAD
+=======
+
+  // City-level markers for the map
+  let cityMarkers = [];
+  try {
+    const cityRows = db.prepare(`
+      SELECT 
+        city,
+        region,
+        country,
+        AVG(lat) as lat,
+        AVG(lon) as lon,
+        COUNT(DISTINCT ip_hash) as count
+      FROM page_views 
+      WHERE timestamp > datetime('now', '-' || ? || ' days')
+      AND lat IS NOT NULL
+      AND lon IS NOT NULL
+      AND city IS NOT NULL
+      GROUP BY city, region, country
+      ORDER BY count DESC
+      LIMIT 100
+    `).all(days);
+
+    cityMarkers = cityRows.map(r => ({
+      name: [r.city, r.region, r.country].filter(Boolean).join(', '),
+      city: r.city,
+      region: r.region,
+      country: r.country,
+      coords: [r.lat, r.lon],
+      count: r.count
+    }));
+  } catch(e) {
+    console.error('Error fetching city markers:', e);
+  }
+>>>>>>> 7470d5f ( Please enter the commit message for your changes. Lines starting)
 
   res.json({
     uniqueVisitors,
@@ -363,7 +403,8 @@ router.get('/analytics', authenticateToken, (req, res) => {
     },
     trafficSources,
     channels,
-    countries
+    countries,
+    cityMarkers
   });
 });
 
