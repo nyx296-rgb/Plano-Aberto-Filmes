@@ -4,23 +4,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin - Plano Aberto Filmes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
   <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="/admin.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsvectormap/dist/css/jsvectormap.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/jsvectormap"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsvectormap/dist/maps/world.js"></script>
 </head>
 <body>
   <div class="sidebar">
     <div class="logo"><div class="logo-text">PLANO ABERTO<br>FILMES</div></div>
     <div id="sidebarGreeting" class="user-greeting" style="padding: 20px; color: #fff; font-weight: 600; font-size: 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 10px;"></div>
-    <div class="nav-item active" data-section="dashboard">📊 Visão Geral</div>
-    <div class="nav-item" data-section="analytics">📈 Analytics</div>
-    <div class="nav-item" data-section="articles">📝 Artigos</div>
-    <div class="nav-item" data-section="videos">🎬 Vídeos</div>
-    <div class="nav-item" data-section="news">📰 Notícias</div>
-    <div class="nav-item" data-section="partners">🤝 Parceiros</div>
-    <div class="nav-item" data-section="moderation">💬 Moderação</div>
-    <div class="nav-item" data-section="users">👥 Usuários</div>
-    <div class="nav-item" data-section="inbox">📥 Caixa de Entrada</div>
+    <div class="nav-item active" data-section="dashboard"><i data-lucide="layout-dashboard"></i> Visão Geral</div>
+    <div class="nav-item" data-section="analytics"><i data-lucide="line-chart"></i> Analytics</div>
+    <div class="nav-item" data-section="articles"><i data-lucide="file-text"></i> Artigos</div>
+    <div class="nav-item" data-section="videos"><i data-lucide="video"></i> Vídeos</div>
+    <div class="nav-item" data-section="news"><i data-lucide="newspaper"></i> Notícias</div>
+    <div class="nav-item" data-section="partners"><i data-lucide="handshake"></i> Parceiros</div>
+    <div class="nav-item" data-section="moderation">
+      <i data-lucide="message-square-warning"></i> <span class="nav-text">Moderação</span> <span class="badge" id="badge-moderation"></span>
+    </div>
+    <div class="nav-item" data-section="users"><i data-lucide="users"></i> Usuários</div>
+    <div class="nav-item" data-section="inbox">
+      <i data-lucide="inbox"></i> <span class="nav-text">Caixa de Entrada</span> <span class="badge" id="badge-inbox"></span>
+    </div>
     <div class="sidebar-footer">
       <a href="/" target="_blank" class="btn btn-secondary btn-block" style="text-decoration:none">Ver Site</a>
       <div class="logout-btn" id="logoutBtn">Sair</div>
@@ -50,15 +61,15 @@
       <h3 style="color: var(--text); margin-bottom: 20px; font-size: 1.25rem; font-weight: 600;">O que você quer publicar hoje?</h3>
       <div class="action-grid">
         <div class="action-card" onclick="openEditor('news')">
-            <span class="action-icon">📰</span>
+            <i data-lucide="newspaper" class="action-icon"></i>
             <div class="action-title">+ Nova Notícia</div>
         </div>
         <div class="action-card" onclick="openEditor('article')">
-            <span class="action-icon">📝</span>
+            <i data-lucide="file-text" class="action-icon"></i>
             <div class="action-title">+ Novo Artigo</div>
         </div>
         <div class="action-card" onclick="openEditor('video')">
-            <span class="action-icon">🎬</span>
+            <i data-lucide="video" class="action-icon"></i>
             <div class="action-title">+ Novo Vídeo</div>
         </div>
       </div>
@@ -117,6 +128,13 @@
           <h3 style="margin-top:1.5rem">Países</h3>
           <div id="countryList" style="margin-top:0.5rem"></div>
         </div>
+      </div>
+      
+      <!-- Interactive World Map -->
+      <div class="chart-card" style="margin-top:1rem; padding-bottom: 20px;">
+        <h3>Acessos Globais</h3>
+        <div id="worldMap" style="width: 100%; height: 350px; margin-top:1rem;"></div>
+        <div id="mapLegend" style="display:flex; justify-content:center; gap: 15px; margin-top: 15px; font-size: 0.85rem; color: #999;"></div>
       </div>
 
       <!-- Traffic Sources -->
@@ -374,14 +392,26 @@
           </select>
         </div>
 
-        <div class="form-group">
-          <label>📸 Instagram</label>
-          <input type="text" id="partnerInstagram" class="form-input" placeholder="@usuario ou link">
+        <!-- Static links (For both) -->
+        <div id="section_alpha_fields">
+          <div class="form-group">
+            <label>📸 Instagram</label>
+            <input type="text" id="partnerInstagram" class="form-input" placeholder="@usuario ou link">
+          </div>
+          <div class="form-group">
+            <label>🌐 Website</label>
+            <input type="text" id="partnerWebsite" class="form-input" placeholder="https://exemplo.com.br">
+          </div>
         </div>
 
-        <div class="form-group">
-          <label>🌐 Website</label>
-          <input type="text" id="partnerWebsite" class="form-input" placeholder="https://exemplo.com.br">
+        <!-- Dynamic links (For Sponsors) -->
+        <div id="section_beta_fields" style="display:none; background:#111; padding:15px; border-radius:8px; border:1px solid #333; margin-bottom:15px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <label style="margin:0; font-weight:700;">Redes Sociais Dinâmicas</label>
+            <button type="button" class="btn btn-sm" onclick="addDynamicSocialLink()">+ Adicionar Rede</button>
+          </div>
+          <div id="dyn_items_container" style="display:flex; flex-direction:column; gap:10px;"></div>
+          <input type="hidden" id="partnerSocialLinksJson">
         </div>
 
         <div class="form-group">
@@ -401,5 +431,8 @@
   </div>
 
   <script src="/admin-app.js"></script>
+  <script>
+    lucide.createIcons();
+  </script>
 </body>
 </html>

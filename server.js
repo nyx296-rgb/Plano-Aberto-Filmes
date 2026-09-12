@@ -81,15 +81,21 @@ app.use((req, res, next) => {
 });
 
 // Analytics Middleware
+const geoip = require('geoip-lite');
 app.use((req, res, next) => {
-  if (req.path.startsWith('/api') || req.path.includes('.')) return next();
+  if (req.path.startsWith('/api') || req.path.startsWith('/admin') || req.path.includes('.')) return next();
   
   const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
-  const ip_hash = crypto.createHash('md5').update(ip).digest('hex');
+  // Use first IP if there are multiple in x-forwarded-for
+  const clientIp = ip.split(',')[0].trim();
+  const ip_hash = crypto.createHash('md5').update(clientIp).digest('hex');
   const user_agent = req.headers['user-agent'] || 'unknown';
   
+  const geo = geoip.lookup(clientIp === '127.0.0.1' || clientIp === '::1' ? '177.10.133.51' : clientIp); // fallback to BR IP for local testing
+  const country = geo ? geo.country : 'Unknown';
+  
   try {
-    db.prepare('INSERT INTO page_views (path, ip_hash, user_agent) VALUES (?, ?, ?)').run(req.path || '/', ip_hash, user_agent);
+    db.prepare('INSERT INTO page_views (path, ip_hash, user_agent, country) VALUES (?, ?, ?, ?)').run(req.path || '/', ip_hash, user_agent, country);
   } catch (e) {
     console.error('Analytics error:', e.message);
   }

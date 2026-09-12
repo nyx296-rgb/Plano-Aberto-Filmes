@@ -24,6 +24,19 @@ async function apiCall(endpoint, options = {}) {
   return data;
 }
 
+// Load notification badges for moderation and inbox
+async function loadBadges() {
+  try {
+    const badges = await apiCall('/api/stats/badges');
+    const modBadge = document.getElementById('badge-moderation');
+    const inboxBadge = document.getElementById('badge-inbox');
+    if (modBadge) modBadge.textContent = badges.pendingComments > 0 ? badges.pendingComments : '';
+    if (inboxBadge) inboxBadge.textContent = badges.unreadMessages > 0 ? badges.unreadMessages : '';
+  } catch (e) {
+    console.error('Failed to load badges', e);
+  }
+}
+
 // ---- Auth ----
 async function checkAuth() {
   try {
@@ -32,6 +45,9 @@ async function checkAuth() {
     // Sidebar greeting
     const greeting = document.getElementById('sidebarGreeting');
     if (greeting) greeting.textContent = `Olá, ${currentUser.full_name || currentUser.username}`;
+
+    // Load notification badges
+    loadBadges();
 
     // Editors see "Meu Perfil" instead of full user management
     const usersNavItem = document.querySelector('[data-section="users"]');
@@ -51,7 +67,7 @@ function showToast(msg, type = 'success') {
 }
 
 function formatDate(d) { return new Date(d).toLocaleDateString('pt-BR'); }
-function formatNum(n) { return n >= 1000 ? (n/1000).toFixed(1)+'K' : String(n); }
+function formatNum(n) { return Number(n).toLocaleString('pt-BR'); }
 
 // ========================================
 // DASHBOARD (Visão Geral - Opção D)
@@ -210,10 +226,57 @@ function renderDevices(dev) {
 }
 
 // ---- Countries ----
+let jvmMap = null;
 function renderCountries(countries) {
   const el = document.getElementById('countryList');
-  if (!el) return;
-  el.innerHTML = countries.map(c => `<div class="country-row"><span>${c.name}</span><span class="country-pct">${c.pct}%</span></div>`).join('');
+  if (el) {
+    el.innerHTML = countries.map(c => `<div class="country-row"><span>${c.name}</span><span class="country-pct">${c.pct}%</span></div>`).join('');
+  }
+  
+  // Render Map
+  const mapEl = document.getElementById('worldMap');
+  if (!mapEl) return;
+  
+  const mapData = {};
+  countries.forEach(c => {
+    // We expect c.id to be the 2-letter ISO code returned by geoip-lite
+    if(c.id && c.id.length === 2) {
+      mapData[c.id.toUpperCase()] = c.count || c.pct;
+    }
+  });
+
+  if (jvmMap) {
+    mapEl.innerHTML = ''; // Recreate on update
+  }
+
+  jvmMap = new jsVectorMap({
+    selector: '#worldMap',
+    map: 'world',
+    backgroundColor: 'transparent',
+    regionStyle: {
+      initial: {
+        fill: '#222222',
+        stroke: '#333',
+        strokeWidth: 0.5,
+        fillOpacity: 1
+      },
+      hover: { fill: '#60a5fa' }
+    },
+    visualizeData: {
+      scale: ['#e50914', '#ff4d4d'], // Dark glassmorphism red theme
+      values: mapData
+    },
+    onRegionTooltipShow(event, tooltip, code) {
+      const value = mapData[code] || 0;
+      tooltip.text(
+        `<div style="padding: 4px; border-radius: 4px; font-family: 'Outfit', sans-serif;">
+           <strong>${tooltip.text()}</strong><br>
+           Acessos: ${value}
+         </div>`,
+        true // allow html
+      );
+    }
+  });
 }
 
 // ---- Traffic Sources ----
@@ -281,14 +344,14 @@ async function loadModeration() {
 
 async function moderateComment(id, status) {
   await apiCall(`/api/stats/comments/${id}/moderate`, { method: 'POST', body: JSON.stringify({ status }) });
-  showToast('Comentário moderado!'); loadModeration();
+  showToast('Comentário moderado!'); loadModeration(); loadBadges();
 }
 
 async function deleteComment(id) {
   if (!confirm('Excluir este comentário permanentemente?')) return;
   await apiCall(`/api/stats/comments/${id}`, { method: 'DELETE' });
   showToast('Comentário excluído!');
-  loadModeration();
+  loadModeration(); loadBadges();
 }
 
 async function reassociateComments(oldId, newId, type) {
@@ -706,6 +769,7 @@ async function viewMessage(id) {
     await apiCall(`/api/messages/${id}`, { method: 'PUT', body: JSON.stringify({ status: 'read' }) });
     m.status = 'read';
     renderMessageList();
+    loadBadges();
   }
 }
 
@@ -713,7 +777,7 @@ async function markMessageUnread() {
   if (!currentMessageId) return;
   await apiCall(`/api/messages/${currentMessageId}`, { method: 'PUT', body: JSON.stringify({ status: 'unread' }) });
   showToast('Mensagem marcada como não lida');
-  loadMessages();
+  loadMessages(); loadBadges();
 }
 
 async function deleteMessage() {
@@ -724,6 +788,7 @@ async function deleteMessage() {
   document.getElementById('messageDetailContent').innerHTML = '<p style="color:#666;text-align:center;margin-top:100px;">Selecione uma mensagem para ler</p>';
   document.getElementById('messageDetailActions').style.display = 'none';
   loadMessages();
+  loadBadges();
 }
 
 // ========================================
@@ -794,6 +859,7 @@ function openPartnerEditor(type, id) {
   document.getElementById('partnerImageLabel').textContent = type === 'sponsor' ? 'URL da Logomarca' : 'URL da Foto';
 
   document.getElementById('partnerImagePreview').style.display = 'none';
+  document.getElementById('dyn_items_container').innerHTML = '';
 
   if (id) {
     const table = type === 'sponsor' ? 'sponsors' : 'supporters';
@@ -804,9 +870,20 @@ function openPartnerEditor(type, id) {
         document.getElementById('partnerDescription').value = item.description || '';
         document.getElementById('partnerImage').value = type === 'sponsor' ? (item.logo_url || '') : (item.photo_url || '');
         document.getElementById('partnerTier').value = item.tier;
+        document.getElementById('partnerStatus').value = item.status;
+        
+        if (type === 'sponsor') {
+          // Sponsor dynamic links
+          try {
+            const parsedLinks = JSON.parse(item.social_links || '[]');
+            parsedLinks.forEach(link => addDynamicSocialLink(link.platform, link.url, link.icon_url));
+          } catch(e) {}
+        }
+        
+        // Static links (For both)
         document.getElementById('partnerInstagram').value = item.instagram || '';
         document.getElementById('partnerWebsite').value = item.website || '';
-        document.getElementById('partnerStatus').value = item.status;
+
         const imgUrl = type === 'sponsor' ? item.logo_url : item.photo_url;
         if (imgUrl) {
           document.getElementById('partnerImagePreviewImg').src = imgUrl;
@@ -816,6 +893,13 @@ function openPartnerEditor(type, id) {
     });
   }
   
+  // Show/Hide relevant fields based on type
+  if (type === 'sponsor') {
+    document.getElementById('section_beta_fields').style.display = 'block';
+  } else {
+    document.getElementById('section_beta_fields').style.display = 'none';
+  }
+
   modal.classList.remove('hidden');
   setTimeout(() => modal.classList.add('active'), 10);
 }
@@ -835,13 +919,26 @@ async function savePartner() {
     name: document.getElementById('partnerName').value,
     description: document.getElementById('partnerDescription').value || null,
     tier: document.getElementById('partnerTier').value,
-    status: document.getElementById('partnerStatus').value,
-    instagram: document.getElementById('partnerInstagram').value || null,
-    website: document.getElementById('partnerWebsite').value || null
+    status: document.getElementById('partnerStatus').value
   };
 
-  if (type === 'sponsor') data.logo_url = document.getElementById('partnerImage').value;
-  else data.photo_url = document.getElementById('partnerImage').value;
+  if (type === 'sponsor') {
+    data.logo_url = document.getElementById('partnerImage').value;
+    // Collect dynamic links
+    const links = [];
+    document.querySelectorAll('.dynamic-social-link-item').forEach(el => {
+      const platform = el.querySelector('.link-platform').value.trim();
+      const url = el.querySelector('.link-url').value.trim();
+      const icon = el.querySelector('.link-icon-url').value.trim();
+      if (platform && url) links.push({ platform, url, icon_url: icon });
+    });
+    data.social_links = links;
+  }
+  else {
+    data.photo_url = document.getElementById('partnerImage').value;
+    data.instagram = document.getElementById('partnerInstagram').value || null;
+    data.website = document.getElementById('partnerWebsite').value || null;
+  }
 
   try {
     const method = id ? 'PUT' : 'POST';
@@ -876,6 +973,54 @@ async function uploadPartnerImage(input) {
     const data = await res.json();
     if (data.url) {
       document.getElementById('partnerImage').value = data.url;
+      showToast('Upload concluído!');
+    }
+  } catch (e) { showToast('Erro no upload', 'error'); }
+}
+
+// ---- DYNAMIC SOCIAL LINKS (Sponsors) ----
+function addDynamicSocialLink(platform = '', url = '', iconUrl = '') {
+  const container = document.getElementById('dyn_items_container');
+  const div = document.createElement('div');
+  div.className = 'dynamic-social-link-item';
+  div.style.cssText = 'display:flex; gap:10px; align-items:center; background:#1a1a1a; padding:10px; border-radius:6px; border:1px solid #333;';
+  
+  const uniqueId = 'dsl_' + Math.random().toString(36).substr(2, 9);
+  
+  div.innerHTML = `
+    <div style="flex:1; display:flex; flex-direction:column; gap:8px;">
+      <input type="text" class="form-input link-platform" placeholder="Plataforma (ex: Instagram)" value="${platform}">
+      <input type="text" class="form-input link-url" placeholder="URL da rede social" value="${url}">
+      <div style="display:flex; gap:8px;">
+        <input type="text" class="form-input link-icon-url" id="${uniqueId}_url" placeholder="URL da Foto de Perfil" value="${iconUrl}" style="flex:1;">
+        <button type="button" class="btn btn-secondary" onclick="document.getElementById('${uniqueId}_file').click()">Upload</button>
+        <input type="file" id="${uniqueId}_file" style="display:none" accept="image/*" onchange="uploadDynamicLinkImage(this, '${uniqueId}_url', '${uniqueId}_preview')">
+      </div>
+    </div>
+    <div style="width:60px; height:60px; display:flex; justify-content:center; align-items:center; background:#111; border-radius:8px; border:1px solid #333;">
+      <img id="${uniqueId}_preview" src="${iconUrl || ''}" style="max-width:100%; max-height:100%; border-radius:6px; display:${iconUrl ? 'block' : 'none'}; object-fit:cover;">
+    </div>
+    <button type="button" class="btn" style="background:#ef4444; padding:5px 10px;" onclick="this.parentElement.remove()">X</button>
+  `;
+  container.appendChild(div);
+}
+
+async function uploadDynamicLinkImage(input, targetUrlId, targetPreviewId) {
+  if (!input.files || !input.files[0]) return;
+  const formData = new FormData();
+  formData.append('file', input.files[0]);
+  try {
+    const res = await fetch('/api/upload', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+      body: formData
+    });
+    const data = await res.json();
+    if (data.url) {
+      document.getElementById(targetUrlId).value = data.url;
+      const preview = document.getElementById(targetPreviewId);
+      preview.src = data.url;
+      preview.style.display = 'block';
       showToast('Upload concluído!');
     }
   } catch (e) { showToast('Erro no upload', 'error'); }

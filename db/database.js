@@ -155,6 +155,9 @@ function initializeSchema() {
   try { db.run("ALTER TABLE comments ADD COLUMN ip_hash TEXT"); } catch(e) {}
   try { db.run("ALTER TABLE comments ADD COLUMN edited INTEGER DEFAULT 0"); } catch(e) {}
 
+  // Schema migrations: page_views table
+  try { db.run("ALTER TABLE page_views ADD COLUMN country TEXT"); } catch(e) {}
+
   const adminResult = db.exec("SELECT id FROM users WHERE role = 'admin'");
   if (adminResult.length === 0 || adminResult[0].values.length === 0) {
     const hashedPassword = bcrypt.hashSync('admin123', 10);
@@ -209,6 +212,7 @@ function initializeSchema() {
   try { db.run("ALTER TABLE sponsors ADD COLUMN description TEXT"); } catch(e) {}
   try { db.run("ALTER TABLE sponsors ADD COLUMN instagram TEXT"); } catch(e) {}
   try { db.run("ALTER TABLE sponsors ADD COLUMN website TEXT"); } catch(e) {}
+  try { db.run("ALTER TABLE sponsors ADD COLUMN social_links TEXT"); } catch(e) {}
 
   if (db.prepare('SELECT COUNT(*) as count FROM supporters').get().count === 0) {
     db.run("INSERT INTO supporters (name, tier) VALUES ('Cinemax BR', 'Gold'), ('Ana Julia', 'Silver')");

@@ -56,25 +56,37 @@ router.delete('/supporters/:id', authenticateToken, (req, res) => {
 
 // Admin: Add sponsor
 router.post('/sponsors', authenticateToken, (req, res) => {
-  const { name, logo_url, tier, status, description, instagram, website } = req.body;
+  const { name, logo_url, tier, status, description, instagram, website, social_links } = req.body;
   if (!name) return res.status(400).json({ error: 'Name required' });
   const safeTier = VALID_TIERS_SPONSOR.includes(tier) ? tier : 'Platinum';
   const safeStatus = VALID_STATUSES.includes(status) ? status : 'active';
-  db.prepare('INSERT INTO sponsors (name, logo_url, tier, status, description, instagram, website) VALUES (?, ?, ?, ?, ?, ?, ?)').run(
+  
+  let socialLinksJson = null;
+  if (social_links && Array.isArray(social_links)) {
+    socialLinksJson = JSON.stringify(social_links);
+  }
+
+  db.prepare('INSERT INTO sponsors (name, logo_url, tier, status, description, instagram, website, social_links) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').run(
     sanitize(name), sanitize(logo_url, 500), safeTier, safeStatus,
-    sanitize(description, 500), sanitize(instagram), sanitize(website, 500)
+    sanitize(description, 500), sanitize(instagram), sanitize(website, 500), socialLinksJson
   );
   res.json({ success: true });
 });
 
 // Admin: Update sponsor
 router.put('/sponsors/:id', authenticateToken, (req, res) => {
-  const { name, logo_url, tier, status, description, instagram, website } = req.body;
+  const { name, logo_url, tier, status, description, instagram, website, social_links } = req.body;
   const safeTier = VALID_TIERS_SPONSOR.includes(tier) ? tier : 'Platinum';
   const safeStatus = VALID_STATUSES.includes(status) ? status : 'active';
-  db.prepare('UPDATE sponsors SET name = ?, logo_url = ?, tier = ?, status = ?, description = ?, instagram = ?, website = ? WHERE id = ?').run(
+  
+  let socialLinksJson = null;
+  if (social_links && Array.isArray(social_links)) {
+    socialLinksJson = JSON.stringify(social_links);
+  }
+
+  db.prepare('UPDATE sponsors SET name = ?, logo_url = ?, tier = ?, status = ?, description = ?, instagram = ?, website = ?, social_links = ? WHERE id = ?').run(
     sanitize(name), sanitize(logo_url, 500), safeTier, safeStatus,
-    sanitize(description, 500), sanitize(instagram), sanitize(website, 500), req.params.id
+    sanitize(description, 500), sanitize(instagram), sanitize(website, 500), socialLinksJson, req.params.id
   );
   res.json({ success: true });
 });

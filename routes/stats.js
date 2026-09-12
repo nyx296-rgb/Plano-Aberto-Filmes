@@ -190,6 +190,17 @@ router.get('/summary', authenticateToken, (req, res) => {
   });
 });
 
+// Admin notification badges
+router.get('/badges', authenticateToken, (req, res) => {
+  try {
+    const pendingComments = db.prepare('SELECT COUNT(*) as count FROM comments WHERE status = "pending"').get().count;
+    const unreadMessages = db.prepare('SELECT COUNT(*) as count FROM messages WHERE status = "unread"').get().count;
+    res.json({ pendingComments, unreadMessages });
+  } catch (err) {
+    res.json({ pendingComments: 0, unreadMessages: 0 });
+  }
+});
+
 // Admin comments list
 router.get('/comments', authenticateToken, (req, res) => {
   const comments = db.prepare(`
@@ -307,14 +318,36 @@ router.get('/analytics', authenticateToken, (req, res) => {
     { name: 'Pago', value: 15, color: '#ef4444' }
   ];
 
-  // Countries (simulated)
-  const countries = [
-    { name: 'Brasil', pct: 68 },
-    { name: 'Portugal', pct: 11 },
-    { name: 'EUA', pct: 7 },
-    { name: 'Argentina', pct: 5 },
-    { name: 'Outros', pct: 9 }
-  ];
+  // Real Countries calculation
+  let countries = [];
+  try {
+    const rows = db.prepare(`
+      SELECT country, COUNT(DISTINCT ip_hash) as count 
+      FROM page_views 
+      WHERE timestamp > datetime('now', '-' || ? || ' days')
+      AND country IS NOT NULL
+      GROUP BY country
+      ORDER BY count DESC
+    `).all(days);
+    
+    let totalCountryViews = 0;
+    const countryNames = new Intl.DisplayNames(['pt-BR'], {type: 'region'});
+    
+    const mapped = rows.map(r => {
+      totalCountryViews += r.count;
+      let name = r.country;
+      try { name = countryNames.of(r.country) || r.country; } catch(e) {}
+      return { id: r.country, name, count: r.count };
+    });
+    
+    countries = mapped.map(c => ({
+      id: c.id,
+      name: c.name,
+      pct: Math.round((c.count / (totalCountryViews || 1)) * 100)
+    }));
+  } catch (e) {
+    console.error('Error fetching countries:', e);
+  }
 
   res.json({
     uniqueVisitors,

@@ -589,15 +589,37 @@
             const logo = s.logo_url
                 ? `<img src="${s.logo_url}" alt="${s.name}">`
                 : `<div class="sp-logo">${initials}</div>`;
-            const ig = s.instagram ? s.instagram.replace('@','') : '';
-            const web = s.website ? s.website.replace(/^https?:\/\//,'').replace(/\/$/,'') : '';
+            
             let social = '';
-            if (s.instagram) {
-                social += `<a class="sp-social" href="https://instagram.com/${ig}" target="_blank" rel="noopener"><i class="ti ti-brand-instagram" aria-hidden="true"></i>${s.instagram}</a>`;
+            
+            // Dynamic Links
+            try {
+                if (s.social_links) {
+                    const links = JSON.parse(s.social_links);
+                    if (links && links.length > 0) {
+                        social += `<div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">`;
+                        links.forEach(link => {
+                            if (link.icon_url) {
+                                social += `<a href="${link.url}" target="_blank" rel="noopener" title="${link.platform}" style="display:inline-block; width:36px; height:36px; border-radius:50%; overflow:hidden; border:2px solid rgba(255,255,255,0.1); transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                                    <img src="${link.icon_url}" style="width:100%; height:100%; object-fit:cover;">
+                                </a>`;
+                            } else {
+                                social += `<a class="sp-social" href="${link.url}" target="_blank" rel="noopener">${link.platform}</a>`;
+                            }
+                        });
+                        social += `</div>`;
+                    }
+                } else {
+                    // Fallback to legacy fields if JSON doesn't exist yet
+                    const ig = s.instagram ? s.instagram.replace('@','') : '';
+                    const web = s.website ? s.website.replace(/^https?:\/\//,'').replace(/\/$/,'') : '';
+                    if (s.instagram) social += `<a class="sp-social" href="https://instagram.com/${ig}" target="_blank" rel="noopener"><i class="ti ti-brand-instagram" aria-hidden="true"></i>${s.instagram}</a>`;
+                    if (s.website) social += `<a class="sp-social" href="${s.website}" target="_blank" rel="noopener"><i class="ti ti-world" aria-hidden="true"></i>${web}</a>`;
+                }
+            } catch (e) {
+                console.error("Error parsing social_links", e);
             }
-            if (s.website) {
-                social += `<a class="sp-social" href="${s.website}" target="_blank" rel="noopener"><i class="ti ti-world" aria-hidden="true"></i>${web}</a>`;
-            }
+
             return `
             <div class="sp-card${goldClass}">
                 <div class="sp-card-top">${logo}</div>
