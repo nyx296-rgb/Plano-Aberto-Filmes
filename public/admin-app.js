@@ -227,11 +227,7 @@ function renderDevices(dev) {
 
 // ---- Countries ----
 let jvmMap = null;
-<<<<<<< HEAD
-function renderCountries(countries) {
-=======
 function renderCountries(countries, cityMarkers) {
->>>>>>> 7470d5f ( Please enter the commit message for your changes. Lines starting)
   const el = document.getElementById('countryList');
   if (el) {
     el.innerHTML = countries.map(c => `<div class="country-row"><span>${c.name}</span><span class="country-pct">${c.pct}%</span></div>`).join('');
@@ -240,27 +236,15 @@ function renderCountries(countries, cityMarkers) {
   // Render Map
   const mapEl = document.getElementById('worldMap');
   if (!mapEl) return;
-<<<<<<< HEAD
-  
-  const mapData = {};
-  countries.forEach(c => {
-    // We expect c.id to be the 2-letter ISO code returned by geoip-lite
-    if(c.id && c.id.length === 2) {
-=======
 
   // Country-level coloring data
   const mapData = {};
   countries.forEach(c => {
     if (c.id && c.id.length === 2) {
->>>>>>> 7470d5f ( Please enter the commit message for your changes. Lines starting)
       mapData[c.id.toUpperCase()] = c.count || c.pct;
     }
   });
 
-<<<<<<< HEAD
-  if (jvmMap) {
-    mapEl.innerHTML = ''; // Recreate on update
-=======
   // City-level markers
   const markers = (cityMarkers || []).map(m => ({
     name: m.name,
@@ -278,7 +262,6 @@ function renderCountries(countries, cityMarkers) {
   if (jvmMap) {
     mapEl.innerHTML = ''; // Recreate on update
     jvmMap = null;
->>>>>>> 7470d5f ( Please enter the commit message for your changes. Lines starting)
   }
 
   jvmMap = new jsVectorMap({
@@ -286,31 +269,6 @@ function renderCountries(countries, cityMarkers) {
     map: 'world',
     backgroundColor: 'transparent',
     regionStyle: {
-<<<<<<< HEAD
-      initial: {
-        fill: '#222222',
-        stroke: '#333',
-        strokeWidth: 0.5,
-        fillOpacity: 1
-      },
-      hover: { fill: '#60a5fa' }
-    },
-    visualizeData: {
-      scale: ['#e50914', '#ff4d4d'], // Dark glassmorphism red theme
-      values: mapData
-    },
-    onRegionTooltipShow(event, tooltip, code) {
-      const value = mapData[code] || 0;
-      tooltip.text(
-        `<div style="padding: 4px; border-radius: 4px; font-family: 'Outfit', sans-serif;">
-           <strong>${tooltip.text()}</strong><br>
-           Acessos: ${value}
-         </div>`,
-        true // allow html
-      );
-    }
-  });
-=======
       initial: { fill: '#222222', stroke: '#333', strokeWidth: 0.5, fillOpacity: 1 },
       hover: { fill: '#334155' }
     },
@@ -353,7 +311,6 @@ function renderCountries(countries, cityMarkers) {
       </span>
     `).join('');
   }
->>>>>>> 7470d5f ( Please enter the commit message for your changes. Lines starting)
 }
 
 // ---- Traffic Sources ----

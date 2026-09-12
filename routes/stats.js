@@ -343,17 +343,12 @@ router.get('/analytics', authenticateToken, (req, res) => {
     countries = mapped.map(c => ({
       id: c.id,
       name: c.name,
-<<<<<<< HEAD
-=======
       count: c.count,
->>>>>>> 7470d5f ( Please enter the commit message for your changes. Lines starting)
       pct: Math.round((c.count / (totalCountryViews || 1)) * 100)
     }));
   } catch (e) {
     console.error('Error fetching countries:', e);
   }
-<<<<<<< HEAD
-=======
 
   // City-level markers for the map
   let cityMarkers = [];
@@ -387,7 +382,6 @@ router.get('/analytics', authenticateToken, (req, res) => {
   } catch(e) {
     console.error('Error fetching city markers:', e);
   }
->>>>>>> 7470d5f ( Please enter the commit message for your changes. Lines starting)
 
   res.json({
     uniqueVisitors,
