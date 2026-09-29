@@ -220,6 +220,7 @@ function initializeSchema() {
   try { db.run("ALTER TABLE sponsors ADD COLUMN instagram TEXT"); } catch(e) {}
   try { db.run("ALTER TABLE sponsors ADD COLUMN website TEXT"); } catch(e) {}
   try { db.run("ALTER TABLE sponsors ADD COLUMN social_links TEXT"); } catch(e) {}
+  try { db.run("ALTER TABLE supporters ADD COLUMN social_links TEXT"); } catch(e) {}
 
   if (db.prepare('SELECT COUNT(*) as count FROM supporters').get().count === 0) {
     db.run("INSERT INTO supporters (name, tier) VALUES ('Cinemax BR', 'Gold'), ('Ana Julia', 'Silver')");

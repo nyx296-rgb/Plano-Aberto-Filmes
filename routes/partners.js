@@ -25,25 +25,33 @@ router.get('/sponsors', (req, res) => {
 
 // Admin: Add supporter
 router.post('/supporters', authenticateToken, (req, res) => {
-  const { name, photo_url, tier, status, description, instagram, website } = req.body;
+  const { name, photo_url, tier, status, description, social_links } = req.body;
   if (!name) return res.status(400).json({ error: 'Name required' });
   const safeTier = VALID_TIERS_SUPPORTER.includes(tier) ? tier : 'Gold';
   const safeStatus = VALID_STATUSES.includes(status) ? status : 'active';
-  db.prepare('INSERT INTO supporters (name, photo_url, tier, status, description, instagram, website) VALUES (?, ?, ?, ?, ?, ?, ?)').run(
+  let socialLinksJson = null;
+  if (social_links && Array.isArray(social_links)) {
+    socialLinksJson = JSON.stringify(social_links);
+  }
+  db.prepare('INSERT INTO supporters (name, photo_url, tier, status, description, social_links) VALUES (?, ?, ?, ?, ?, ?)').run(
     sanitize(name), sanitize(photo_url, 500), safeTier, safeStatus,
-    sanitize(description, 500), sanitize(instagram), sanitize(website, 500)
+    sanitize(description, 500), socialLinksJson
   );
   res.json({ success: true });
 });
 
 // Admin: Update supporter
 router.put('/supporters/:id', authenticateToken, (req, res) => {
-  const { name, photo_url, tier, status, description, instagram, website } = req.body;
+  const { name, photo_url, tier, status, description, social_links } = req.body;
   const safeTier = VALID_TIERS_SUPPORTER.includes(tier) ? tier : 'Gold';
   const safeStatus = VALID_STATUSES.includes(status) ? status : 'active';
-  db.prepare('UPDATE supporters SET name = ?, photo_url = ?, tier = ?, status = ?, description = ?, instagram = ?, website = ? WHERE id = ?').run(
+  let socialLinksJson = null;
+  if (social_links && Array.isArray(social_links)) {
+    socialLinksJson = JSON.stringify(social_links);
+  }
+  db.prepare('UPDATE supporters SET name = ?, photo_url = ?, tier = ?, status = ?, description = ?, social_links = ? WHERE id = ?').run(
     sanitize(name), sanitize(photo_url, 500), safeTier, safeStatus,
-    sanitize(description, 500), sanitize(instagram), sanitize(website, 500), req.params.id
+    sanitize(description, 500), socialLinksJson, req.params.id
   );
   res.json({ success: true });
 });

@@ -876,9 +876,10 @@ async function loadPartners() {
     const sponsors = await apiCall('/api/partners/sponsors');
     const supporters = await apiCall('/api/partners/supporters');
 
+    function socialCount(s) {
+      try { const l = JSON.parse(s.social_links || '[]'); return l.length ? l.map(x => x.platform).join(', ') : '-'; } catch(e) { return '-'; }
+    }
     document.getElementById('sponsorsList').innerHTML = sponsors.map(s => {
-      const ig = s.instagram ? s.instagram.replace('@','') : '';
-      const web = s.website ? s.website.replace(/^https?:\/\//,'').replace(/\/$/,'') : '';
       return `
       <tr>
         <td>
@@ -889,19 +890,16 @@ async function loadPartners() {
         </td>
         <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${s.description || ''}">${s.description || '-'}</td>
         <td>${s.tier}</td>
-        <td>${s.instagram ? '<a href="https://instagram.com/' + ig + '" target="_blank" style="color:#e1306c;">' + s.instagram + '</a>' : '-'}</td>
-        <td>${s.website ? '<a href="' + s.website + '" target="_blank" style="color:#4dabf7;">' + web + '</a>' : '-'}</td>
+        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${socialCount(s)}">${socialCount(s)}</td>
         <td><span class="status-badge status-${s.status === 'active' ? 'published' : 'draft'}">${s.status}</span></td>
         <td class="actions">
           <button class="btn btn-sm" onclick="openPartnerEditor('sponsor', ${s.id})">Editar</button>
           <button class="btn btn-sm btn-danger" onclick="deletePartner('sponsor', ${s.id})">Excluir</button>
         </td>
       </tr>`;
-    }).join('') || '<tr><td colspan="7" class="empty-state">Nenhum patrocinador</td></tr>';
+    }).join('') || '<tr><td colspan="6" class="empty-state">Nenhum patrocinador</td></tr>';
 
     document.getElementById('supportersList').innerHTML = supporters.map(s => {
-      const ig = s.instagram ? s.instagram.replace('@','') : '';
-      const web = s.website ? s.website.replace(/^https?:\/\//,'').replace(/\/$/,'') : '';
       return `
       <tr>
         <td>
@@ -912,15 +910,14 @@ async function loadPartners() {
         </td>
         <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${s.description || ''}">${s.description || '-'}</td>
         <td>${s.tier}</td>
-        <td>${s.instagram ? '<a href="https://instagram.com/' + ig + '" target="_blank" style="color:#e1306c;">' + s.instagram + '</a>' : '-'}</td>
-        <td>${s.website ? '<a href="' + s.website + '" target="_blank" style="color:#4dabf7;">' + web + '</a>' : '-'}</td>
+        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${socialCount(s)}">${socialCount(s)}</td>
         <td><span class="status-badge status-${s.status === 'active' ? 'published' : 'draft'}">${s.status}</span></td>
         <td class="actions">
           <button class="btn btn-sm" onclick="openPartnerEditor('supporter', ${s.id})">Editar</button>
           <button class="btn btn-sm btn-danger" onclick="deletePartner('supporter', ${s.id})">Excluir</button>
         </td>
       </tr>`;
-    }).join('') || '<tr><td colspan="7" class="empty-state">Nenhum apoiador</td></tr>';
+    }).join('') || '<tr><td colspan="6" class="empty-state">Nenhum apoiador</td></tr>';
   } catch (e) { console.error('Load partners error:', e); }
 }
 
@@ -949,17 +946,10 @@ function openPartnerEditor(type, id) {
         document.getElementById('partnerTier').value = item.tier;
         document.getElementById('partnerStatus').value = item.status;
         
-        if (type === 'sponsor') {
-          // Sponsor dynamic links
-          try {
-            const parsedLinks = JSON.parse(item.social_links || '[]');
-            parsedLinks.forEach(link => addDynamicSocialLink(link.platform, link.url, link.icon_url));
-          } catch(e) {}
-        }
-        
-        // Static links (For both)
-        document.getElementById('partnerInstagram').value = item.instagram || '';
-        document.getElementById('partnerWebsite').value = item.website || '';
+        try {
+          const parsedLinks = JSON.parse(item.social_links || '[]');
+          parsedLinks.forEach(link => addDynamicSocialLink(link.platform, link.url, link.icon_url));
+        } catch(e) {}
 
         const imgUrl = type === 'sponsor' ? item.logo_url : item.photo_url;
         if (imgUrl) {
@@ -970,12 +960,7 @@ function openPartnerEditor(type, id) {
     });
   }
   
-  // Show/Hide relevant fields based on type
-  if (type === 'sponsor') {
-    document.getElementById('section_beta_fields').style.display = 'block';
-  } else {
-    document.getElementById('section_beta_fields').style.display = 'none';
-  }
+  document.getElementById('section_beta_fields').style.display = 'block';
 
   modal.classList.remove('hidden');
   setTimeout(() => modal.classList.add('active'), 10);
@@ -999,22 +984,18 @@ async function savePartner() {
     status: document.getElementById('partnerStatus').value
   };
 
+  const links = [];
+  document.querySelectorAll('.dynamic-social-link-item').forEach(el => {
+    const platform = el.querySelector('.link-platform').value.trim();
+    const url = el.querySelector('.link-url').value.trim();
+    const icon = el.querySelector('.link-icon-url').value.trim();
+    if (platform && url) links.push({ platform, url, icon_url: icon });
+  });
+  data.social_links = links;
   if (type === 'sponsor') {
     data.logo_url = document.getElementById('partnerImage').value;
-    // Collect dynamic links
-    const links = [];
-    document.querySelectorAll('.dynamic-social-link-item').forEach(el => {
-      const platform = el.querySelector('.link-platform').value.trim();
-      const url = el.querySelector('.link-url').value.trim();
-      const icon = el.querySelector('.link-icon-url').value.trim();
-      if (platform && url) links.push({ platform, url, icon_url: icon });
-    });
-    data.social_links = links;
-  }
-  else {
+  } else {
     data.photo_url = document.getElementById('partnerImage').value;
-    data.instagram = document.getElementById('partnerInstagram').value || null;
-    data.website = document.getElementById('partnerWebsite').value || null;
   }
 
   try {

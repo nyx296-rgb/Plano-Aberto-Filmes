@@ -249,6 +249,7 @@ async function renderArticles() {
 async function renderArticle(id) {
     showLoading();
     try {
+        fetch('/api/stats/hit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'article', id }) }).catch(()=>{});
         const [a, stats] = await Promise.all([
             api('/content/articles/' + id),
             api('/stats/public/article/' + id)
@@ -307,6 +308,7 @@ async function renderVideos() {
 async function renderVideo(id) {
     showLoading();
     try {
+        fetch('/api/stats/hit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'video', id }) }).catch(()=>{});
         const [v, stats] = await Promise.all([
             api('/content/videos/' + id),
             api('/stats/public/video/' + id)

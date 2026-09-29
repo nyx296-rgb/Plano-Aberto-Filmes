@@ -7,7 +7,7 @@ const router = express.Router();
 
 // Helper to hash IP
 function getIpHash(req) {
-  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1').split(',')[0].trim();
   return crypto.createHash('md5').update(ip).digest('hex');
 }
 
@@ -48,7 +48,7 @@ router.get('/public/:type/:id', (req, res) => {
   
   const ipHash = getIpHash(req);
   const likesCount = db.prepare('SELECT COUNT(*) as count FROM likes WHERE content_id = ? AND content_type = ?').get(contentId, type).count;
-  const viewsCount = db.prepare('SELECT COUNT(*) as count FROM page_views WHERE path LIKE ? OR path LIKE ?').get('%/' + type + 's/' + numericId, '%/' + type + 's/' + id).count;
+  const viewsCount = db.prepare('SELECT COUNT(*) as count FROM page_views WHERE path = ? OR path = ?').get('/' + type + 's/' + numericId, '/' + type + 's/' + id).count;
   
   const comments = db.prepare(`
     SELECT c.id, c.author_name, c.content, c.created_at, c.parent_id, c.user_id, c.ip_hash, c.edited,
@@ -414,6 +414,30 @@ router.get('/online', (req, res) => {
   // Fallback to a small random number if 0 to make it feel "alive"
   const displayCount = onlineCount > 0 ? onlineCount : Math.floor(Math.random() * 5) + 1;
   res.json({ count: displayCount });
+});
+
+// Record view (1 per IP per day)
+router.post('/hit', (req, res) => {
+  const { type, id } = req.body;
+  if (!type || !id) return res.status(400).json({ error: 'type and id required' });
+  if (type !== 'article' && type !== 'video') return res.status(400).json({ error: 'invalid type' });
+  const contentId = resolveContentId(type, id);
+  if (!contentId) return res.status(404).json({ error: 'Content not found' });
+  const ip_hash = getIpHash(req);
+  const ua = req.headers['user-agent'] || 'spa-hit';
+  const path = '/' + type + 's/' + contentId;
+  const existing = db.prepare("SELECT id FROM page_views WHERE ip_hash = ? AND path = ? AND timestamp > datetime('now', '-1 day')").get(ip_hash, path);
+  if (existing) return res.json({ counted: false });
+  try {
+    const geo = require('geoip-lite');
+    const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1').split(',')[0].trim();
+    const geoData = geo.lookup(ip === '127.0.0.1' || ip === '::1' ? '177.10.133.51' : ip);
+    const country = geoData ? geoData.country : 'Unknown';
+    db.prepare('INSERT INTO page_views (path, ip_hash, user_agent, country) VALUES (?, ?, ?, ?)').run(path, ip_hash, ua, country);
+  } catch (e) {
+    db.prepare('INSERT INTO page_views (path, ip_hash, user_agent) VALUES (?, ?, ?)').run(path, ip_hash, ua);
+  }
+  res.json({ counted: true });
 });
 
 // Global total views
