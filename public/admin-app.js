@@ -74,7 +74,8 @@ function formatNum(n) { return Number(n).toLocaleString('pt-BR'); }
 // ========================================
 async function loadDashboard() {
   try {
-    const a = await apiCall(`/api/stats/analytics?period=7`);
+    const period = document.getElementById('dashboardPeriod')?.value || '7';
+    const a = await apiCall(`/api/stats/analytics?period=${period}`);
     document.getElementById('bigMetricVisitors').textContent = formatNum(a.uniqueVisitors);
     document.getElementById('bigMetricPageviews').textContent = formatNum(a.totalViews);
     document.getElementById('bigMetricDuration').textContent = a.avgDuration;
@@ -208,7 +209,14 @@ function drawDonutChart(channels) {
 function renderTopPages(pages) {
   const el = document.getElementById('topPages');
   if (!el) return;
-  el.innerHTML = pages.map(p => {
+  
+  const limit = document.getElementById('topPagesLimit')?.value || '10';
+  let displayPages = pages;
+  if (limit !== 'all') {
+    displayPages = pages.slice(0, parseInt(limit, 10));
+  }
+  
+  el.innerHTML = displayPages.map(p => {
     const pct = analyticsData.totalViews ? Math.round((p.views/analyticsData.totalViews)*100) : 0;
     return `<tr><td class="page-path">${p.path}</td><td>${formatNum(p.views)}</td><td>${pct}%</td></tr>`;
   }).join('') || '<tr><td colspan="3" class="empty-state">Sem dados</td></tr>';
@@ -230,7 +238,12 @@ let jvmMap = null;
 function renderCountries(countries, cityMarkers) {
   const el = document.getElementById('countryList');
   if (el) {
-    el.innerHTML = countries.map(c => `<div class="country-row"><span>${c.name}</span><span class="country-pct">${c.pct}%</span></div>`).join('');
+    const limit = document.getElementById('countryLimit')?.value || '10';
+    let displayCountries = countries;
+    if (limit !== 'all') {
+      displayCountries = countries.slice(0, parseInt(limit, 10));
+    }
+    el.innerHTML = displayCountries.map(c => `<div class="country-row"><span>${c.name}</span><span class="country-pct">${c.pct}%</span></div>`).join('');
   }
   
   // Render Map

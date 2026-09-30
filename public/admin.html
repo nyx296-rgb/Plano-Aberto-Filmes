@@ -41,7 +41,16 @@
   <div class="main">
     <!-- ===== DASHBOARD (Opção D) ===== -->
     <div id="dashboardSection">
-      <div class="header"><h1>Visão Geral</h1></div>
+      <div class="header" style="display:flex; justify-content:space-between; align-items:center;">
+        <h1 style="margin:0;">Visão Geral</h1>
+        <select id="dashboardPeriod" onchange="loadDashboard()" style="padding:6px 12px; width:auto; font-size:0.9rem;">
+          <option value="7">7 dias</option>
+          <option value="15">15 dias</option>
+          <option value="30">30 dias</option>
+          <option value="90">90 dias</option>
+          <option value="all">Todo o período</option>
+        </select>
+      </div>
       
       <div class="big-metric-grid">
         <div class="big-metric-card">
@@ -119,13 +128,29 @@
       <!-- Bottom Row -->
       <div class="charts-row">
         <div class="chart-card">
-          <h3>Páginas mais visitadas</h3>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+            <h3 style="margin:0;">Páginas mais visitadas</h3>
+            <select id="topPagesLimit" onchange="if(window.analyticsData) renderTopPages(window.analyticsData.topPages)" style="padding:4px 8px; width:auto;">
+              <option value="10">10</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+              <option value="all">Todas</option>
+            </select>
+          </div>
           <table class="mini-table"><thead><tr><th>Página</th><th>Views</th><th>%</th></tr></thead><tbody id="topPages"></tbody></table>
         </div>
         <div class="chart-card">
           <h3>Dispositivos</h3>
           <div id="deviceBars" style="margin-top:1rem"></div>
-          <h3 style="margin-top:1.5rem">Países</h3>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1.5rem; margin-bottom:0.5rem;">
+            <h3 style="margin:0;">Países</h3>
+            <select id="countryLimit" onchange="if(window.analyticsData) renderCountries(window.analyticsData.countries, window.analyticsData.cityMarkers)" style="padding:4px 8px; width:auto;">
+              <option value="10">10</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+              <option value="all">Todas</option>
+            </select>
+          </div>
           <div id="countryList" style="margin-top:0.5rem"></div>
         </div>
       </div>
