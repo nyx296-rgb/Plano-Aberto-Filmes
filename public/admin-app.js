@@ -355,15 +355,21 @@ async function loadVideos() {
 }
 
 async function loadModeration() {
+  const inlineBox = document.getElementById('reassocInlineBox');
+  const modalBtn = document.getElementById('btnOpenReassocModal');
+  if (inlineBox && modalBtn && currentUser) {
+    const isAdmin = currentUser.role === 'admin';
+    inlineBox.style.display = isAdmin ? '' : 'none';
+    modalBtn.style.display = isAdmin ? 'none' : '';
+  }
+
   const comments = await apiCall('/api/stats/comments');
   document.getElementById('commentsList').innerHTML = comments.map(c => {
-    // Determine the public URL based on type and id/slug
     let baseUrl = '/articles/';
     if (c.content_type === 'video') baseUrl = '/videos/';
-    else if (c.category === 'Notícias') baseUrl = '/news/'; // Handle news specifically
-    
+    else if (c.category === 'Notícias') baseUrl = '/news/';
     const contentUrl = `${baseUrl}${c.content_id}`;
-    
+    const idLabel = `${c.content_id} — ${c.content_type === 'video' ? 'vídeo' : 'artigo'}`;
     return `
       <tr>
         <td>${c.author_name}</td>
@@ -374,6 +380,7 @@ async function loadModeration() {
           </a>
           <span style="font-size:0.75rem; color:#666; display:block">(${c.content_type})</span>
         </td>
+        <td style="white-space:nowrap;font-size:0.85rem;color:#aaa;">${idLabel}</td>
         <td>${formatDate(c.created_at)}</td>
         <td class="actions" style="display:flex; align-items:center; gap:8px;">
           ${c.status === 'pending' ? `
@@ -386,7 +393,7 @@ async function loadModeration() {
         </td>
       </tr>
     `;
-  }).join('') || '<tr><td colspan="5" class="empty-state">Nenhum comentário</td></tr>';
+  }).join('') || '<tr><td colspan="6" class="empty-state">Nenhum comentário</td></tr>';
 }
 
 async function moderateComment(id, status) {
@@ -402,13 +409,44 @@ async function deleteComment(id) {
 }
 
 async function reassociateComments(oldId, newId, type) {
+  if (!oldId || !newId) { showToast('Preencha origem e destino.', 'error'); return; }
   if (!confirm(`Mover todos os comentários de ${type} ID ${oldId} para ID ${newId}?`)) return;
   const result = await apiCall('/api/stats/comments/reassociate', {
     method: 'POST',
     body: JSON.stringify({ old_content_id: oldId, new_content_id: newId, content_type: type })
   });
   showToast(`${result.updated} comentário(s) reassociado(s)!`);
+  const inlineOld = document.getElementById('reassocOldId');
+  const inlineNew = document.getElementById('reassocNewId');
+  if (inlineOld) inlineOld.value = '';
+  if (inlineNew) inlineNew.value = '';
+  closeReassocModal();
   loadModeration();
+}
+
+function openReassocModal() {
+  const m = document.getElementById('reassocModal');
+  if (!m) return;
+  m.classList.remove('hidden');
+  setTimeout(() => m.classList.add('active'), 10);
+}
+
+function closeReassocModal() {
+  const m = document.getElementById('reassocModal');
+  if (!m) return;
+  m.classList.remove('active');
+  setTimeout(() => m.classList.add('hidden'), 200);
+  const o = document.getElementById('reassocModalOldId');
+  const n = document.getElementById('reassocModalNewId');
+  if (o) o.value = '';
+  if (n) n.value = '';
+}
+
+function submitReassocModal() {
+  const oldId = document.getElementById('reassocModalOldId')?.value;
+  const newId = document.getElementById('reassocModalNewId')?.value;
+  const type = document.getElementById('reassocModalType')?.value || 'article';
+  reassociateComments(oldId, newId, type);
 }
 
 async function loadUsers() {

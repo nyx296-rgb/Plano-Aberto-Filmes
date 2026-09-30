@@ -231,7 +231,7 @@ router.post('/comments/:id/moderate', authenticateToken, (req, res) => {
 
 // Admin reassociate comments to correct content
 router.post('/comments/reassociate', authenticateToken, (req, res) => {
-  if (req.user.role !== 'admin') {
+  if (req.user.role !== 'admin' && req.user.role !== 'editor') {
     return res.status(403).json({ error: 'Admin access required' });
   }
   const { old_content_id, new_content_id, content_type } = req.body;
