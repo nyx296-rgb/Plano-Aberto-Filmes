@@ -227,11 +227,7 @@ function renderDevices(dev) {
 
 // ---- Countries ----
 let jvmMap = null;
-<<<<<<< HEAD
 function renderCountries(countries, cityMarkers) {
-=======
-function renderCountries(countries) {
->>>>>>> 87ea68e (feat: implementado links dinamicos, interface renovada do admin e correções de analytics)
   const el = document.getElementById('countryList');
   if (el) {
     el.innerHTML = countries.map(c => `<div class="country-row"><span>${c.name}</span><span class="country-pct">${c.pct}%</span></div>`).join('');
@@ -240,24 +236,15 @@ function renderCountries(countries) {
   // Render Map
   const mapEl = document.getElementById('worldMap');
   if (!mapEl) return;
-<<<<<<< HEAD
 
   // Country-level coloring data
   const mapData = {};
   countries.forEach(c => {
     if (c.id && c.id.length === 2) {
-=======
-  
-  const mapData = {};
-  countries.forEach(c => {
-    // We expect c.id to be the 2-letter ISO code returned by geoip-lite
-    if(c.id && c.id.length === 2) {
->>>>>>> 87ea68e (feat: implementado links dinamicos, interface renovada do admin e correções de analytics)
       mapData[c.id.toUpperCase()] = c.count || c.pct;
     }
   });
 
-<<<<<<< HEAD
   // City-level markers
   const markers = (cityMarkers || []).map(m => ({
     name: m.name,
@@ -275,10 +262,6 @@ function renderCountries(countries) {
   if (jvmMap) {
     mapEl.innerHTML = ''; // Recreate on update
     jvmMap = null;
-=======
-  if (jvmMap) {
-    mapEl.innerHTML = ''; // Recreate on update
->>>>>>> 87ea68e (feat: implementado links dinamicos, interface renovada do admin e correções de analytics)
   }
 
   jvmMap = new jsVectorMap({
@@ -286,7 +269,6 @@ function renderCountries(countries) {
     map: 'world',
     backgroundColor: 'transparent',
     regionStyle: {
-<<<<<<< HEAD
       initial: { fill: '#222222', stroke: '#333', strokeWidth: 0.5, fillOpacity: 1 },
       hover: { fill: '#334155' }
     },
@@ -329,31 +311,6 @@ function renderCountries(countries) {
       </span>
     `).join('');
   }
-=======
-      initial: {
-        fill: '#222222',
-        stroke: '#333',
-        strokeWidth: 0.5,
-        fillOpacity: 1
-      },
-      hover: { fill: '#60a5fa' }
-    },
-    visualizeData: {
-      scale: ['#e50914', '#ff4d4d'], // Dark glassmorphism red theme
-      values: mapData
-    },
-    onRegionTooltipShow(event, tooltip, code) {
-      const value = mapData[code] || 0;
-      tooltip.text(
-        `<div style="padding: 4px; border-radius: 4px; font-family: 'Outfit', sans-serif;">
-           <strong>${tooltip.text()}</strong><br>
-           Acessos: ${value}
-         </div>`,
-        true // allow html
-      );
-    }
-  });
->>>>>>> 87ea68e (feat: implementado links dinamicos, interface renovada do admin e correções de analytics)
 }
 
 // ---- Traffic Sources ----
