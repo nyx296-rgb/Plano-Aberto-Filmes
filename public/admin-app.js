@@ -86,7 +86,7 @@ async function loadDashboard() {
 // ANALYTICS (Dashboard Antigo)
 // ========================================
 async function loadAnalytics() {
-  const period = document.querySelector('.period-btn.active')?.dataset.period || '7';
+  const period = document.getElementById('analyticsPeriod')?.value || '7';
   try {
     analyticsData = await apiCall(`/api/stats/analytics?period=${period}`);
     const a = analyticsData;
@@ -723,14 +723,6 @@ document.querySelectorAll('.nav-item').forEach(item => {
   };
 });
 
-// Period buttons
-document.querySelectorAll('.period-btn').forEach(btn => {
-  btn.onclick = () => {
-    document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    loadAnalytics();
-  };
-});
 
 document.getElementById('logoutBtn').onclick = () => { localStorage.removeItem('token'); window.location.href = '/login.html'; };
 

@@ -249,42 +249,63 @@ router.post('/comments/reassociate', authenticateToken, (req, res) => {
 // Detailed analytics for admin dashboard
 router.get('/analytics', authenticateToken, (req, res) => {
   const period = req.query.period || '7';
-  const days = Math.min(Math.max(parseInt(period) || 7, 1), 365); // clamp 1–365
+  const isAll = period === 'all';
+  const days = isAll ? null : Math.min(Math.max(parseInt(period) || 7, 1), 365);
+
+  // Helper to build WHERE clause
+  const dateWhere = isAll ? '' : `WHERE timestamp > datetime('now', '-' || ${days} || ' days')`;
+  const dateWhereAnd = isAll ? '' : `AND timestamp > datetime('now', '-' || ${days} || ' days')`;
 
   // Total metrics
-  const totalViews = db.prepare("SELECT COUNT(*) as count FROM page_views WHERE timestamp > datetime('now', '-' || ? || ' days')").get(days).count;
-  const uniqueVisitors = db.prepare("SELECT COUNT(DISTINCT ip_hash) as count FROM page_views WHERE timestamp > datetime('now', '-' || ? || ' days')").get(days).count;
+  const totalViews = db.prepare(`SELECT COUNT(*) as count FROM page_views ${dateWhere}`).get().count;
+  const uniqueVisitors = db.prepare(`SELECT COUNT(DISTINCT ip_hash) as count FROM page_views ${dateWhere}`).get().count;
 
   // Views per day (for chart)
-  const viewsPerDay = [];
-  for (let i = days - 1; i >= 0; i--) {
-    const dayData = db.prepare(`
-      SELECT 
-        date(timestamp) as day,
-        COUNT(*) as views,
-        COUNT(DISTINCT ip_hash) as visitors
-      FROM page_views 
-      WHERE date(timestamp) = date('now', '-' || ? || ' days')
-    `).get(i);
-    const d = new Date();
-    d.setDate(d.getDate() - i);
-    viewsPerDay.push({
-      day: d.toISOString().split('T')[0],
-      label: d.toLocaleDateString('pt-BR', { weekday: 'short' }),
-      views: dayData.views || 0,
-      visitors: dayData.visitors || 0
-    });
+  let viewsPerDay = [];
+  if (isAll) {
+    // Group all data by date directly from DB
+    const rows = db.prepare(`
+      SELECT date(timestamp) as day, COUNT(*) as views, COUNT(DISTINCT ip_hash) as visitors
+      FROM page_views
+      GROUP BY date(timestamp)
+      ORDER BY day ASC
+    `).all();
+    viewsPerDay = rows.map(r => ({
+      day: r.day,
+      label: new Date(r.day + 'T12:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }),
+      views: r.views || 0,
+      visitors: r.visitors || 0
+    }));
+  } else {
+    for (let i = days - 1; i >= 0; i--) {
+      const dayData = db.prepare(`
+        SELECT 
+          date(timestamp) as day,
+          COUNT(*) as views,
+          COUNT(DISTINCT ip_hash) as visitors
+        FROM page_views 
+        WHERE date(timestamp) = date('now', '-' || ? || ' days')
+      `).get(i);
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      viewsPerDay.push({
+        day: d.toISOString().split('T')[0],
+        label: d.toLocaleDateString('pt-BR', { weekday: 'short' }),
+        views: dayData.views || 0,
+        visitors: dayData.visitors || 0
+      });
+    }
   }
 
   // Most visited pages
   const topPages = db.prepare(`
     SELECT path, COUNT(*) as views, COUNT(DISTINCT ip_hash) as unique_views
-    FROM page_views WHERE timestamp > datetime('now', '-' || ? || ' days')
-    GROUP BY path ORDER BY views DESC LIMIT 8
-  `).all(days);
+    FROM page_views ${dateWhere}
+    GROUP BY path ORDER BY views DESC LIMIT 500
+  `).all();
 
   // Device breakdown (from user_agent)
-  const allAgents = db.prepare("SELECT user_agent FROM page_views WHERE timestamp > datetime('now', '-' || ? || ' days') AND user_agent IS NOT NULL").all(days);
+  const allAgents = db.prepare(`SELECT user_agent FROM page_views ${dateWhere ? dateWhere + ' AND user_agent IS NOT NULL' : 'WHERE user_agent IS NOT NULL'}`).all();
   let desktop = 0, mobile = 0, tablet = 0;
   allAgents.forEach(r => {
     const ua = (r.user_agent || '').toLowerCase();
@@ -324,11 +345,11 @@ router.get('/analytics', authenticateToken, (req, res) => {
     const rows = db.prepare(`
       SELECT country, COUNT(DISTINCT ip_hash) as count 
       FROM page_views 
-      WHERE timestamp > datetime('now', '-' || ? || ' days')
-      AND country IS NOT NULL
+      ${dateWhere}
+      ${isAll ? 'WHERE' : 'AND'} country IS NOT NULL
       GROUP BY country
       ORDER BY count DESC
-    `).all(days);
+    `).all();
     
     let totalCountryViews = 0;
     const countryNames = new Intl.DisplayNames(['pt-BR'], {type: 'region'});
@@ -362,14 +383,14 @@ router.get('/analytics', authenticateToken, (req, res) => {
         AVG(lon) as lon,
         COUNT(DISTINCT ip_hash) as count
       FROM page_views 
-      WHERE timestamp > datetime('now', '-' || ? || ' days')
-      AND lat IS NOT NULL
+      ${dateWhere}
+      ${isAll ? 'WHERE' : 'AND'} lat IS NOT NULL
       AND lon IS NOT NULL
       AND city IS NOT NULL
       GROUP BY city, region, country
       ORDER BY count DESC
       LIMIT 100
-    `).all(days);
+    `).all();
 
     cityMarkers = cityRows.map(r => ({
       name: [r.city, r.region, r.country].filter(Boolean).join(', '),
