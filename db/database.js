@@ -157,13 +157,10 @@ function initializeSchema() {
 
   // Schema migrations: page_views table
   try { db.run("ALTER TABLE page_views ADD COLUMN country TEXT"); } catch(e) {}
-<<<<<<< HEAD
   try { db.run("ALTER TABLE page_views ADD COLUMN region TEXT"); } catch(e) {}
   try { db.run("ALTER TABLE page_views ADD COLUMN city TEXT"); } catch(e) {}
   try { db.run("ALTER TABLE page_views ADD COLUMN lat REAL"); } catch(e) {}
   try { db.run("ALTER TABLE page_views ADD COLUMN lon REAL"); } catch(e) {}
-=======
->>>>>>> 87ea68e (feat: implementado links dinamicos, interface renovada do admin e correções de analytics)
 
   const adminResult = db.exec("SELECT id FROM users WHERE role = 'admin'");
   if (adminResult.length === 0 || adminResult[0].values.length === 0) {
