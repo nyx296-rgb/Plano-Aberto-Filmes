@@ -879,6 +879,13 @@ async function loadPartners() {
     function socialCount(s) {
       try { const l = JSON.parse(s.social_links || '[]'); return l.length ? l.map(x => x.platform).join(', ') : '-'; } catch(e) { return '-'; }
     }
+    const TIER_COLORS = { platinum:'#e8f1ff', gold:'#f5c518', silver:'#c0c4cc', bronze:'#cd7f32' };
+    function tierBadge(tier){
+      const n = String(tier||'').trim().toLowerCase();
+      const color = TIER_COLORS[n] || '#888';
+      const label = String(tier||'-').trim() || '-';
+      return `<span style="display:inline-flex;align-items:center;gap:6px;font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:999px;border:1px solid color-mix(in srgb, ${color} 55%, transparent);background: color-mix(in srgb, ${color} 14%, #1a1a1a);color:${color};"><span style="width:7px;height:7px;border-radius:50%;background:${color};display:inline-block;flex-shrink:0;"></span>${label}</span>`;
+    }
     document.getElementById('sponsorsList').innerHTML = sponsors.map(s => {
       return `
       <tr>
@@ -889,7 +896,7 @@ async function loadPartners() {
           </div>
         </td>
         <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${s.description || ''}">${s.description || '-'}</td>
-        <td>${s.tier}</td>
+        <td>${tierBadge(s.tier)}</td>
         <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${socialCount(s)}">${socialCount(s)}</td>
         <td><span class="status-badge status-${s.status === 'active' ? 'published' : 'draft'}">${s.status}</span></td>
         <td class="actions">
@@ -909,7 +916,7 @@ async function loadPartners() {
           </div>
         </td>
         <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${s.description || ''}">${s.description || '-'}</td>
-        <td>${s.tier}</td>
+        <td>${tierBadge(s.tier)}</td>
         <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${socialCount(s)}">${socialCount(s)}</td>
         <td><span class="status-badge status-${s.status === 'active' ? 'published' : 'draft'}">${s.status}</span></td>
         <td class="actions">
