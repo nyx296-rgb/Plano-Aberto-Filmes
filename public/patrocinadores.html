@@ -207,9 +207,9 @@
         .tier-bronze .sp-card-name { font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
         .sp-card-type { font-size: 11px; color: #777; margin: 0 0 6px; }
         .tier-silver .sp-card-type { display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden; }
-        .tier-bronze .sp-card-type { display:none; }
+        .tier-bronze .sp-card-type { display:block; font-size:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
         .sp-card-footer { padding: 0 14px 14px; display: flex; flex-direction: column; gap: 5px; }
-        .tier-bronze .sp-card-footer { display:none; }
+        .tier-bronze .sp-card-footer { display:flex; padding: 0 10px 10px; }
         .sp-card-divider { height: 1px; background: #333; margin-bottom: 4px; }
         .sp-social { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #777; text-decoration: none; transition: color 0.15s; }
         .sp-social:hover { color: #f0f0f0; }
@@ -486,36 +486,35 @@
             const isBronze = normalizeTier(s.tier)==='bronze';
             const logo = s.logo_url ? `<img src="${s.logo_url}" alt="${s.name}">` : `<div class="sp-logo">${initials}</div>`;
             let social = '';
-            if(!isBronze){
-                try {
-                    if (s.social_links) {
-                        const links = JSON.parse(s.social_links);
-                        if (links && links.length > 0) {
-                            social += `<div class="card-socials">`;
-                            links.forEach(link => {
-                                const href = String(link.url||'').trim();
-                                const plat = String(link.platform||'Link').trim();
-                                if(!href) return;
-                                if (link.icon_url) {
-                                    social += `<a class="social-link social-link--img" href="${href}" target="_blank" rel="noopener noreferrer" title="${plat}" aria-label="${plat} de ${s.name}"><img src="${link.icon_url}" alt=""></a>`;
-                                } else {
-                                    social += `<a class="social-link social-link--text" href="${href}" target="_blank" rel="noopener noreferrer" title="${plat}" aria-label="${plat} de ${s.name}">${plat.slice(0,12)}</a>`;
-                                }
-                            });
-                            social += `</div>`;
-                        }
-                    } else {
-                        const ig = s.instagram ? s.instagram.replace('@','') : '';
-                        const web = s.website ? s.website.replace(/^https?:\/\//,'').replace(/\/$/,'') : '';
-                        if (s.instagram || s.website) {
-                            social += `<div class="card-socials">`;
-                            if (s.instagram) social += `<a class="social-link social-link--text" href="https://instagram.com/${ig}" target="_blank" rel="noopener noreferrer" title="${s.instagram}" aria-label="Instagram de ${s.name}">${s.instagram.slice(0,12)}</a>`;
-                            if (s.website) social += `<a class="social-link social-link--text" href="${s.website}" target="_blank" rel="noopener noreferrer" title="${web}" aria-label="Site de ${s.name}">Site</a>`;
-                            social += `</div>`;
-                        }
+            try {
+                if (s.social_links) {
+                    const links = JSON.parse(s.social_links);
+                    if (links && links.length > 0) {
+                        social += `<div class="card-socials">`;
+                        links.forEach(link => {
+                            const href = String(link.url||'').trim();
+                            const plat = String(link.platform||'Link').trim();
+                            if(!href) return;
+                            const safeHref = /^https?:\/\//i.test(href) ? href : `https://${href.replace(/^\/+/, '')}`;
+                            if (link.icon_url) {
+                                social += `<a class="social-link social-link--img" href="${safeHref}" target="_blank" rel="noopener noreferrer" title="${plat}" aria-label="${plat} de ${s.name}"><img src="${link.icon_url}" alt=""></a>`;
+                            } else {
+                                social += `<a class="social-link social-link--text" href="${safeHref}" target="_blank" rel="noopener noreferrer" title="${plat}" aria-label="${plat} de ${s.name}">${plat.slice(0,12)}</a>`;
+                            }
+                        });
+                        social += `</div>`;
                     }
-                } catch (e) {}
-            }
+                } else {
+                    const ig = s.instagram ? s.instagram.replace('@','') : '';
+                    const web = s.website ? s.website.replace(/^https?:\/\//,'').replace(/\/$/,'') : '';
+                    if (s.instagram || s.website) {
+                        social += `<div class="card-socials">`;
+                        if (s.instagram) social += `<a class="social-link social-link--text" href="https://instagram.com/${ig}" target="_blank" rel="noopener noreferrer" title="${s.instagram}" aria-label="Instagram de ${s.name}">${s.instagram.slice(0,12)}</a>`;
+                        if (s.website) social += `<a class="social-link social-link--text" href="${s.website}" target="_blank" rel="noopener noreferrer" title="${web}" aria-label="Site de ${s.name}">Site</a>`;
+                        social += `</div>`;
+                    }
+                }
+            } catch (e) {}
             const shine = isPlatinum ? `<div class="shine"></div>` : '';
             const desc = s.description ? `<p class="sp-card-type">${s.description}</p>` : '';
             const footer = social ? `<div class="sp-card-footer"><div class="sp-card-divider"></div>${social}</div>` : '';
