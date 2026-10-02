@@ -163,81 +163,63 @@
             color: #fff;
         }
 
-        .tier-section { margin-bottom: 2.5rem; }
-        .tier-head { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
-        .tier-head h3 { font-size:.78rem; letter-spacing:.18em; text-transform:uppercase; color:var(--tier); margin:0; }
-        .tier-line { flex:1; height:1px; background: color-mix(in srgb, var(--tier) 35%, transparent); }
-        .tier-count { font-size:.72rem; color:#666; border:1px solid #222; border-radius:999px; padding:2px 8px; }
-        .sp-track-wrap { overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; cursor: grab; padding-bottom: 4px; }
-        .sp-track-wrap:active { cursor: grabbing; }
-        .sp-track-wrap::-webkit-scrollbar { display: none; }
-        .sp-track { display:grid; grid-template-columns:repeat(auto-fill,minmax(165px,1fr)); gap:14px; width:100%; }
-        .tier-platinum .sp-track { grid-template-columns:repeat(auto-fill,minmax(400px,1fr)); }
-        .tier-gold .sp-track { grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); }
-        .tier-silver .sp-track { grid-template-columns:repeat(auto-fill,minmax(165px,1fr)); }
-        .tier-bronze .sp-track { grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); }
-        .empty-cta { border:1px dashed color-mix(in srgb,var(--tier) 35%,#333); border-radius:14px; padding:22px; text-align:center; color:var(--muted); background:rgba(255,255,255,.02); }
-        .empty-cta a { display:inline-flex; margin-top:10px; padding:8px 14px; background:var(--tier); color:#000; border-radius:999px; text-decoration:none; font-weight:700; font-size:.82rem; }
-        .empty-cta a:hover { opacity:.9; }
-        @media (max-width: 640px) {
-            .sp-track, .tier-platinum .sp-track, .tier-gold .sp-track, .tier-silver .sp-track, .tier-bronze .sp-track { display:flex; gap:14px; width:max-content; }
-            .sp-track .sp-card { width:165px; flex:0 0 165px; }
-            .tier-platinum .sp-track .sp-card { width:400px; flex:0 0 400px; }
-            .tier-gold .sp-track .sp-card { width:200px; flex:0 0 200px; }
-            .tier-silver .sp-track .sp-card { width:165px; flex:0 0 165px; }
-            .tier-bronze .sp-track .sp-card { width:150px; flex:0 0 150px; }
-            .sp-track-wrap { scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch; }
+        .tier{margin:36px 0}
+        .tier-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+        .tier-head h2{font-size:.8rem;letter-spacing:.18em;text-transform:uppercase;color:var(--tier);margin:0}
+        .tier-line{flex:1;height:1px;background:color-mix(in srgb,var(--tier) 35%,transparent)}
+        .tier-count{font-size:.75rem;color:#666;border:1px solid #222;border-radius:999px;padding:2px 8px}
+        .grid{display:grid;gap:14px}
+        .grid-platinum{grid-template-columns:repeat(2,1fr)}
+        .grid-gold{grid-template-columns:repeat(3,1fr)}
+        .grid-silver{grid-template-columns:repeat(4,1fr)}
+        .grid-bronze{grid-template-columns:repeat(6,1fr)}
+        .card{background:#141414;border:1px solid color-mix(in srgb,var(--tier) 45%,var(--paf-border));border-radius:16px;overflow:hidden;text-align:center;position:relative;display:flex;flex-direction:column}
+        .empty-cta{border:1px dashed color-mix(in srgb,var(--tier) 35%,#333);border-radius:14px;padding:22px;text-align:center;color:var(--muted);background:rgba(255,255,255,.02)}
+        .empty-cta a{display:inline-flex;margin-top:10px;padding:8px 14px;background:var(--tier);color:#000;border-radius:999px;text-decoration:none;font-weight:700;font-size:.82rem}
+        .empty-cta a:hover{opacity:.9}
+        .card:hover{transform:translateY(-2px);transition:transform .15s,border-color .15s,box-shadow .15s}
+        .tier-platinum .card{padding:22px 16px;box-shadow:0 0 0 1px color-mix(in srgb,var(--tier) 40%,transparent),0 12px 40px color-mix(in srgb,var(--tier) 18%,transparent)}
+        .tier-gold .card{padding:18px 14px;box-shadow:0 0 0 1px color-mix(in srgb,var(--tier) 30%,transparent),0 8px 24px color-mix(in srgb,var(--tier) 12%,transparent)}
+        .tier-silver .card{padding:16px 12px}
+        .tier-bronze .card{padding:14px 10px}
+        .avatar{margin:0 auto 10px;border-radius:50%;background:#222;display:flex;align-items:center;justify-content:center;color:var(--tier);font-weight:700;border:2px solid color-mix(in srgb,var(--tier) 35%,transparent);overflow:hidden;flex-shrink:0}
+        .tier-platinum .avatar{width:96px;height:96px;font-size:1.8rem}
+        .tier-gold .avatar{width:72px;height:72px;font-size:1.3rem}
+        .tier-silver .avatar{width:56px;height:56px;font-size:1rem}
+        .tier-bronze .avatar{width:48px;height:48px;font-size:.9rem}
+        .avatar img{width:100%;height:100%;object-fit:cover}
+        .name{font-weight:600;color:#f0f0f0;line-height:1.2}
+        .tier-platinum .name{font-size:1.05rem}
+        .tier-gold .name{font-size:.95rem}
+        .tier-silver .name{font-size:.9rem}
+        .tier-bronze .name{font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .role{font-size:.78rem;color:#777;margin-top:4px}
+        .tier-silver .role{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+        .tier-bronze .role{display:none}
+        .card-socials{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+        .social-link{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:#1e1e1e;border:1px solid #333;color:#999;text-decoration:none;font-size:.7rem;font-weight:700;transition:transform .15s,border-color .15s,color .15s,background .15s}
+        .social-link:hover{transform:translateY(-1px);border-color:color-mix(in srgb,var(--tier) 50%,#333);color:#fff;background:#252525}
+        .social-link:focus-visible{outline:2px solid var(--tier);outline-offset:2px}
+        .social-link i{font-size:16px;line-height:1}
+        .social-link--img{overflow:hidden;padding:0}
+        .social-link--img img{width:100%;height:100%;object-fit:cover;display:block}
+        .social-link--text{width:auto;height:30px;padding:0 10px;border-radius:999px;font-size:.68rem}
+        .shine{position:absolute;inset:0;border-radius:16px;overflow:hidden;pointer-events:none}
+        .shine::after{content:"";position:absolute;top:0;left:-60%;width:60%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.18),transparent);transform:skewX(-18deg);animation:shine 2.8s ease-in-out infinite}
+        @keyframes shine{0%{left:-60%}60%{left:120%}100%{left:120%}}
+        @media(max-width:900px){
+          .grid-platinum{grid-template-columns:repeat(2,1fr)}
+          .grid-gold{grid-template-columns:repeat(2,1fr)}
+          .grid-silver{grid-template-columns:repeat(3,1fr)}
+          .grid-bronze{grid-template-columns:repeat(3,1fr)}
         }
-
-        .sp-card {
-            width: 100%;
-            min-height: 220px;
-            background: #141414;
-            border: 1px solid color-mix(in srgb, var(--tier, #333) 45%, #333);
-            border-top: 3px solid var(--tier);
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            flex-shrink: 0;
-            transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
-            position: relative;
+        @media(max-width:560px){
+          .grid-platinum,.grid-gold,.grid-silver,.grid-bronze{grid-template-columns:1fr}
         }
-        .sp-card:hover { border-color: color-mix(in srgb, var(--tier, #555) 60%, #555); transform: translateY(-2px); }
-        .tier-platinum .sp-card { min-height: 380px; border-width:1.8px; border-top:5px solid var(--tier); box-shadow: 0 0 0 2px color-mix(in srgb, var(--tier) 60%, transparent), 0 22px 56px color-mix(in srgb, var(--tier) 28%, transparent); }
-        .tier-gold .sp-card { min-height: 272px; box-shadow: 0 0 0 1px color-mix(in srgb, var(--tier) 32%, transparent), 0 10px 28px color-mix(in srgb, var(--tier) 13%, transparent); }
-        .tier-silver .sp-card { min-height: 220px; box-shadow: 0 0 0 1px color-mix(in srgb, var(--tier) 18%, transparent); }
-        .tier-bronze .sp-card { min-height: 185px; }
-        .sp-card-top {
-            background: #1a1a1a;
-            border-bottom: 1px solid #333;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            padding: 12px;
+        @media(prefers-reduced-motion:reduce){
+          .card:hover{transform:none}
+          .shine::after{animation:none;display:none}
         }
-        .tier-platinum .sp-card-top { height: 160px; }
-        .tier-gold .sp-card-top { height: 108px; }
-        .tier-silver .sp-card-top { height: 96px; }
-        .tier-bronze .sp-card-top { height: 88px; }
-        .sp-logo {
-            border-radius: 8px;
-            background: #2a2a2a;
-            border: 1px solid #444;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            color: #f0f0f0;
-        }
-        .tier-platinum .sp-logo, .tier-platinum .sp-logo--person { width:120px; height:120px; font-size:26px; border-radius:50%; border-width:2.5px; border-color: color-mix(in srgb, var(--tier) 50%, #444); }
-        .tier-gold .sp-logo, .tier-gold .sp-logo--person { width:72px; height:72px; font-size:18px; border-radius:50%; }
-        .tier-silver .sp-logo, .tier-silver .sp-logo--person { width:56px; height:56px; font-size:14px; border-radius:50%; }
-        .tier-bronze .sp-logo, .tier-bronze .sp-logo--person { width:48px; height:48px; font-size:13px; border-radius:50%; }
-        .sp-logo--person { background: #1e2a4a; border-color: #3040a0; color: #9aa8f0; }
-        .tier-platinum .sp-logo--person, .tier-gold .sp-logo--person, .tier-silver .sp-logo--person, .tier-bronze .sp-logo--person { color: var(--tier); background: #222; border-color: color-mix(in srgb, var(--tier) 35%, #444); }
-        .sp-logo--person img, .sp-logo img { width:100%; height:100%; object-fit:cover; display:block; border-radius:inherit; }
         .sp-card-body { padding: 14px 14px 8px; display: flex; flex-direction: column; flex: 1; gap: 3px; }
         .sp-card-name { font-size: 14px; font-weight: 500; color: #f0f0f0; margin: 0; }
         .tier-platinum .sp-card-name { font-size:15px; font-weight:700; }
@@ -252,15 +234,6 @@
         .sp-social { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #777; text-decoration: none; transition: color 0.15s; }
         .sp-social:hover { color: #f0f0f0; }
         .sp-social i { font-size: 14px; flex-shrink: 0; }
-        .card-socials { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; justify-content:center; }
-        .social-link { display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:50%; background:#1e1e1e; border:1px solid #333; color:#999; text-decoration:none; font-size:.68rem; font-weight:700; transition:transform .15s, border-color .15s, color .15s, background .15s; }
-        .social-link:hover { transform:translateY(-1px); border-color: color-mix(in srgb, var(--tier) 50%, #333); color:#fff; background:#252525; }
-        .social-link:focus-visible { outline:2px solid var(--tier); outline-offset:2px; }
-        .social-link i { font-size:16px; line-height:1; }
-        .social-link--img { overflow:hidden; padding:0; }
-        .social-link--img img { width:100%; height:100%; object-fit:cover; display:block; }
-        .sp-card-top > img { object-fit:cover; border-radius:50%; border:2px solid color-mix(in srgb, var(--tier) 35%, #444); display:block; flex-shrink:0; }
-        .tier-platinum .sp-card-top > img { width:120px; height:120px; border-width:2.5px; }
         .tier-gold .sp-card-top > img { width:72px; height:72px; }
         .tier-silver .sp-card-top > img { width:56px; height:56px; }
         .tier-bronze .sp-card-top > img { width:48px; height:48px; }
@@ -544,11 +517,9 @@
         function supporterCard(s) {
             const initials = s.name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
             const hasPhoto = !!s.photo_url;
-            const logo = hasPhoto
-                ? `<img src="${s.photo_url}" alt="${s.name}" onerror="this.onerror=null;this.src='/logo.png';this.style.objectFit='contain';this.style.padding='8px';this.style.background='#0f0f0f';">`
-                : `<img src="/logo.png" alt="${s.name}" style="object-fit:contain;padding:8px;background:#0f0f0f;">`;
-            const tierCls = tierClass(s.tier);
-            const isBronze = normalizeTier(s.tier)==='bronze';
+            const avatar = hasPhoto
+                ? `<div class="avatar"><img src="${s.photo_url}" alt="${s.name}" onerror="this.onerror=null;this.src='/logo.png';this.style.objectFit='contain';this.style.padding='6px';this.style.background='#0f0f0f';"></div>`
+                : `<div class="avatar">${initials}</div>`;
             const isPlatinum = ['platina','platinum'].includes(normalizeTier(s.tier));
             let social = '';
             try {
@@ -572,9 +543,8 @@
                 }
             } catch (e) {}
             const shine = isPlatinum ? `<div class="shine"></div>` : '';
-            const desc = s.description ? `<p class="sp-card-type">${s.description}</p>` : '';
-            const footer = social ? `<div class="sp-card-footer"><div class="sp-card-divider"></div>${social}</div>` : '';
-            return `<div class="sp-card ${tierCls}">${shine}<div class="sp-card-top">${logo}</div><div class="sp-card-body"><p class="sp-card-name">${s.name}</p>${desc}</div>${footer}</div>`;
+            const role = s.description ? `<p class="role">${s.description}</p>` : '';
+            return `<div class="card">${shine}${avatar}<p class="name">${s.name}</p>${role}${social}</div>`;
         }
 
         async function loadData() {
@@ -584,6 +554,8 @@
                 const supporters = rawSupporters.filter(s => s.status === 'active');
                 const container = document.getElementById('supporters-tiers');
                 const order = ['platina','ouro','prata','bronze'];
+                const gridMap = {platina:'grid-platinum',ouro:'grid-gold',prata:'grid-silver',bronze:'grid-bronze'};
+                const tierKeyMap = {platina:'platinum',ouro:'gold',prata:'silver',bronze:'bronze'};
                 const groups = {platina:[],ouro:[],prata:[],bronze:[]};
                 supporters.forEach(s=>{ const k={platinum:'platina',platina:'platina',gold:'ouro',ouro:'ouro',silver:'prata',prata:'prata',bronze:'bronze'}[normalizeTier(s.tier)]||'bronze'; (groups[k]||groups.bronze).push(s); });
                 order.forEach(k=> groups[k].sort((a,b)=> String(a.name||'').localeCompare(String(b.name||''),'pt-BR')));
@@ -592,13 +564,14 @@
                 else {
                     container.innerHTML = order.map(k=>{
                         const label = tierLabel(k);
-                        const cls = 'tier-'+k;
+                        const tierCls = 'tier-' + tierKeyMap[k];
                         const count = groups[k].length;
+                        const gridCls = gridMap[k];
                         if(count>0){
                             const cards = groups[k].map(s=> supporterCard(s)).join('');
-                            return `<section class="tier-section ${cls}"><div class="tier-head"><h3>${label}</h3><div class="tier-line"></div><span class="tier-count">${count}</span></div><div class="sp-track-wrap"><div class="sp-track">${cards}</div></div></section>`;
+                            return `<section class="tier ${tierCls}"><div class="tier-head"><h2>${label}</h2><div class="tier-line"></div><span class="tier-count">${count}</span></div><div class="grid ${gridCls}">${cards}</div></section>`;
                         }
-                        return `<section class="tier-section ${cls}"><div class="tier-head"><h3>${label}</h3><div class="tier-line"></div><span class="tier-count">0</span></div><div class="empty-cta"><div style="color:var(--tier);font-weight:700;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase">${label}</div><div style="margin-top:6px">Seja o primeiro apoiador ${label}</div><a href="#contato">Falar conosco</a></div></section>`;
+                        return `<section class="tier ${tierCls}"><div class="tier-head"><h2>${label}</h2><div class="tier-line"></div><span class="tier-count">0</span></div><div class="empty-cta" style="--tier:var(--${tierKeyMap[k]})"><div style="color:var(--tier);font-weight:700;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase">${label}</div><div style="margin-top:6px">Seja o primeiro apoiador ${label}</div><a href="#contato">Falar conosco</a></div></section>`;
                     }).join('');
                 }
             } catch (e) { console.error('Load data error:', e); }
