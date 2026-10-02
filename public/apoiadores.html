@@ -197,8 +197,10 @@
             position: relative;
         }
         .sp-card:hover { border-color: color-mix(in srgb, var(--tier, #555) 60%, #555); transform: translateY(-2px); }
-        .tier-platinum .sp-card { border-width:1.5px; box-shadow: 0 0 0 1px color-mix(in srgb, var(--tier) 35%, transparent), 0 12px 32px color-mix(in srgb, var(--tier) 16%, transparent); }
-        .tier-gold .sp-card { box-shadow: 0 0 0 1px color-mix(in srgb, var(--tier) 28%, transparent), 0 8px 22px color-mix(in srgb, var(--tier) 11%, transparent); }
+        .tier-platinum .sp-card { width: 220px; min-height: 280px; border-width:1.5px; box-shadow: 0 0 0 1px color-mix(in srgb, var(--tier) 45%, transparent), 0 14px 36px color-mix(in srgb, var(--tier) 18%, transparent); }
+        .tier-gold .sp-card { width: 200px; min-height: 250px; box-shadow: 0 0 0 1px color-mix(in srgb, var(--tier) 28%, transparent), 0 8px 22px color-mix(in srgb, var(--tier) 11%, transparent); }
+        .tier-silver .sp-card { width: 180px; min-height: 220px; }
+        .tier-bronze .sp-card { width: 160px; min-height: 190px; }
         .sp-card-top {
             background: #1a1a1a;
             border-bottom: 1px solid #333;
@@ -206,11 +208,12 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            padding: 12px;
         }
-        .tier-platinum .sp-card-top { height: 110px; }
-        .tier-gold .sp-card-top { height: 90px; }
-        .tier-silver .sp-card-top { height: 80px; }
-        .tier-bronze .sp-card-top { height: 80px; }
+        .tier-platinum .sp-card-top { height: 124px; }
+        .tier-gold .sp-card-top { height: 108px; }
+        .tier-silver .sp-card-top { height: 96px; }
+        .tier-bronze .sp-card-top { height: 88px; }
         .sp-logo {
             border-radius: 8px;
             background: #2a2a2a;
@@ -227,8 +230,7 @@
         .tier-bronze .sp-logo, .tier-bronze .sp-logo--person { width:48px; height:48px; font-size:13px; border-radius:50%; }
         .sp-logo--person { background: #1e2a4a; border-color: #3040a0; color: #9aa8f0; }
         .tier-platinum .sp-logo--person, .tier-gold .sp-logo--person, .tier-silver .sp-logo--person, .tier-bronze .sp-logo--person { color: var(--tier); background: #222; border-color: color-mix(in srgb, var(--tier) 35%, #444); }
-        .sp-logo--person img, .sp-logo img { width:100%; height:100%; object-fit:cover; display:block; }
-        .tier-platinum .sp-card-top img, .tier-gold .sp-card-top img, .tier-silver .sp-card-top img, .tier-bronze .sp-card-top img { width:100%; height:100%; object-fit:cover; }
+        .sp-logo--person img, .sp-logo img { width:100%; height:100%; object-fit:cover; display:block; border-radius:inherit; }
         .sp-card-body { padding: 14px 14px 8px; display: flex; flex-direction: column; flex: 1; gap: 3px; }
         .sp-card-name { font-size: 14px; font-weight: 500; color: #f0f0f0; margin: 0; }
         .tier-platinum .sp-card-name { font-size:15px; font-weight:700; }
@@ -243,13 +245,18 @@
         .sp-social { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #777; text-decoration: none; transition: color 0.15s; }
         .sp-social:hover { color: #f0f0f0; }
         .sp-social i { font-size: 14px; flex-shrink: 0; }
-        .card-socials { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+        .card-socials { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; justify-content:center; }
         .social-link { display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:50%; background:#1e1e1e; border:1px solid #333; color:#999; text-decoration:none; font-size:.68rem; font-weight:700; transition:transform .15s, border-color .15s, color .15s, background .15s; }
         .social-link:hover { transform:translateY(-1px); border-color: color-mix(in srgb, var(--tier) 50%, #333); color:#fff; background:#252525; }
         .social-link:focus-visible { outline:2px solid var(--tier); outline-offset:2px; }
+        .social-link i { font-size:16px; line-height:1; }
         .social-link--img { overflow:hidden; padding:0; }
         .social-link--img img { width:100%; height:100%; object-fit:cover; display:block; }
-        .social-link--text { width:auto; height:28px; padding:0 10px; border-radius:999px; }
+        .sp-card-top > img { object-fit:cover; border-radius:50%; border:2px solid color-mix(in srgb, var(--tier) 35%, #444); display:block; flex-shrink:0; }
+        .tier-platinum .sp-card-top > img { width:96px; height:96px; }
+        .tier-gold .sp-card-top > img { width:72px; height:72px; }
+        .tier-silver .sp-card-top > img { width:56px; height:56px; }
+        .tier-bronze .sp-card-top > img { width:48px; height:48px; }
         .shine { position:absolute; inset:0; border-radius:12px; overflow:hidden; pointer-events:none; }
         .shine::after { content:""; position:absolute; top:0; left:-60%; width:60%; height:100%; background: linear-gradient(100deg, transparent, rgba(255,255,255,.16), transparent); transform:skewX(-18deg); animation: shine 2.8s ease-in-out infinite; }
         @keyframes shine { 0%{left:-60%} 60%{left:120%} 100%{left:120%} }
@@ -509,6 +516,24 @@
             if(n==='silver') return 'Silver';
             return 'Bronze';
         }
+        function platformIcon(link){
+            const p = String(link.platform||'').trim().toLowerCase();
+            const u = String(link.url||'').toLowerCase();
+            if(p.includes('instagram')||u.includes('instagram.com')) return 'ti ti-brand-instagram';
+            if(p.includes('youtube')||u.includes('youtube.com')||u.includes('youtu.be')) return 'ti ti-brand-youtube';
+            if(p.includes('facebook')||u.includes('facebook.com')||u.includes('fb.com')) return 'ti ti-brand-facebook';
+            if(p.includes('tiktok')||u.includes('tiktok.com')) return 'ti ti-brand-tiktok';
+            if(p.includes('linkedin')||u.includes('linkedin.com')) return 'ti ti-brand-linkedin';
+            if(p.includes('twitter')||p==='x'||u.includes('twitter.com')||u.includes('x.com')) return 'ti ti-brand-x';
+            if(p.includes('email')||u.startsWith('mailto:')) return 'ti ti-mail';
+            return 'ti ti-world';
+        }
+        function safeHref(raw){
+            const s = String(raw||'').trim();
+            if(!s) return '';
+            if(/^mailto:/i.test(s)||/^https?:\/\//i.test(s)) return s;
+            return 'https://'+s.replace(/^\/+/, '');
+        }
         function supporterCard(s) {
             const initials = s.name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
             const hasPhoto = !!s.photo_url;
@@ -525,15 +550,14 @@
                     if (links && links.length > 0) {
                         social += `<div class="card-socials">`;
                         links.forEach(link => {
-                            const href = String(link.url||'').trim();
-                            const plat = String(link.platform||'Link').trim();
+                            const href = safeHref(link.url);
+                            const plat = String(link.platform||'Link').trim() || 'Link';
                             if(!href) return;
-                            const safeHref = /^https?:\/\//i.test(href) ? href : `https://${href.replace(/^\/+/, '')}`;
+                            const iconCls = platformIcon(link);
                             if (link.icon_url) {
-                                social += `<a class="social-link social-link--img" href="${safeHref}" target="_blank" rel="noopener noreferrer" title="${plat}" aria-label="${plat} de ${s.name}"><img src="${link.icon_url}" alt=""></a>`;
+                                social += `<a class="social-link social-link--img" href="${href}" target="_blank" rel="noopener noreferrer" title="${plat}" aria-label="${plat} de ${s.name}"><img src="${link.icon_url}" alt=""></a>`;
                             } else {
-                                const shortPlat = plat.slice(0,12);
-                                social += `<a class="social-link social-link--text" href="${safeHref}" target="_blank" rel="noopener noreferrer" title="${plat}" aria-label="${plat} de ${s.name}">${shortPlat}</a>`;
+                                social += `<a class="social-link" href="${href}" target="_blank" rel="noopener noreferrer" title="${plat}" aria-label="${plat} de ${s.name}"><i class="${iconCls}" aria-hidden="true"></i></a>`;
                             }
                         });
                         social += `</div>`;
