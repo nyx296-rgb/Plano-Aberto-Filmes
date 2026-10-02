@@ -538,7 +538,7 @@
             const initials = s.name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
             const hasPhoto = !!s.photo_url;
             const logo = hasPhoto
-                ? `<img src="${s.photo_url}" alt="${s.name}">`
+                ? `<img src="${s.photo_url}" alt="${s.name}" onerror="this.onerror=null;this.src='/logo.png';this.style.objectFit='contain';this.style.padding='8px';this.style.background='#0f0f0f';">`
                 : `<div class="sp-logo sp-logo--person">${initials}</div>`;
             const tierCls = tierClass(s.tier);
             const isBronze = normalizeTier(s.tier)==='bronze';
@@ -555,9 +555,9 @@
                             if(!href) return;
                             const iconCls = platformIcon(link);
                             if (link.icon_url) {
-                                social += `<a class="social-link social-link--img" href="${href}" target="_blank" rel="noopener noreferrer" title="${plat}" aria-label="${plat} de ${s.name}"><img src="${link.icon_url}" alt=""></a>`;
+                                social += `<a class="social-link social-link--img" href="${href}" target="_blank" rel="noopener noreferrer" title="${plat}" aria-label="${plat} de ${s.name}"><img src="${link.icon_url}" alt="" onerror="this.onerror=null;this.src='/logo.png';this.style.objectFit='contain';this.style.padding='4px';this.style.background='#0f0f0f';"></a>`;
                             } else {
-                                social += `<a class="social-link social-link--img" href="${href}" target="_blank" rel="noopener noreferrer" title="${plat}" aria-label="${plat} de ${s.name}"><img src="/logo.png" alt=""></a>`;
+                                social += `<a class="social-link" href="${href}" target="_blank" rel="noopener noreferrer" title="${plat}" aria-label="${plat} de ${s.name}"><i class="${iconCls}" aria-hidden="true"></i></a>`;
                             }
                         });
                         social += `</div>`;

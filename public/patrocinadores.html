@@ -505,7 +505,7 @@
             const styleTier = tierClass(s.tier);
             const isPlatinum = normalizeTier(s.tier)==='platinum';
             const isBronze = normalizeTier(s.tier)==='bronze';
-            const logo = s.logo_url ? `<img src="${s.logo_url}" alt="${s.name}">` : `<div class="sp-logo">${initials}</div>`;
+            const logo = s.logo_url ? `<img src="${s.logo_url}" alt="${s.name}" onerror="this.onerror=null;this.src='/logo.png';this.style.objectFit='contain';this.style.padding='8px';this.style.background='#0f0f0f';">` : `<div class="sp-logo">${initials}</div>`;
             let social = '';
             try {
                 if (s.social_links) {
@@ -518,9 +518,9 @@
                             if(!href) return;
                             const iconCls = platformIcon(link);
                             if (link.icon_url) {
-                                social += `<a class="social-link social-link--img" href="${href}" target="_blank" rel="noopener noreferrer" title="${plat}" aria-label="${plat} de ${s.name}"><img src="${link.icon_url}" alt=""></a>`;
+                                social += `<a class="social-link social-link--img" href="${href}" target="_blank" rel="noopener noreferrer" title="${plat}" aria-label="${plat} de ${s.name}"><img src="${link.icon_url}" alt="" onerror="this.onerror=null;this.src='/logo.png';this.style.objectFit='contain';this.style.padding='4px';this.style.background='#0f0f0f';"></a>`;
                             } else {
-                                social += `<a class="social-link social-link--img" href="${href}" target="_blank" rel="noopener noreferrer" title="${plat}" aria-label="${plat} de ${s.name}"><img src="/logo.png" alt=""></a>`;
+                                social += `<a class="social-link" href="${href}" target="_blank" rel="noopener noreferrer" title="${plat}" aria-label="${plat} de ${s.name}"><i class="${iconCls}" aria-hidden="true"></i></a>`;
                             }
                         });
                         social += `</div>`;
@@ -530,8 +530,8 @@
                     const web = s.website ? s.website.replace(/^https?:\/\//,'').replace(/\/$/,'') : '';
                     if (s.instagram || s.website) {
                         social += `<div class="card-socials">`;
-                        if (s.instagram) social += `<a class="social-link social-link--img" href="https://instagram.com/${ig}" target="_blank" rel="noopener noreferrer" title="${s.instagram}" aria-label="Instagram de ${s.name}"><img src="/logo.png" alt=""></a>`;
-                        if (s.website) social += `<a class="social-link social-link--img" href="${s.website}" target="_blank" rel="noopener noreferrer" title="${web}" aria-label="Site de ${s.name}"><img src="/logo.png" alt=""></a>`;
+                        if (s.instagram) social += `<a class="social-link" href="https://instagram.com/${ig}" target="_blank" rel="noopener noreferrer" title="${s.instagram}" aria-label="Instagram de ${s.name}"><i class="ti ti-brand-instagram" aria-hidden="true"></i></a>`;
+                        if (s.website) social += `<a class="social-link" href="${s.website}" target="_blank" rel="noopener noreferrer" title="${web}" aria-label="Site de ${s.name}"><i class="ti ti-world" aria-hidden="true"></i></a>`;
                         social += `</div>`;
                     }
                 }
