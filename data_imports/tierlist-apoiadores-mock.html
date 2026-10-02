@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mock — Apoiadores Tierlist | Plano Aberto Filmes</title>
+<style>
+:root{
+  --bg:#000; --card:#141414; --border:#1e1e1e; --muted:#888; --text:#fff;
+  --bronze:#cd7f32; --silver:#c0c4cc; --gold:#f5c518; --platinum:#e8f1ff;
+}
+.tier-platinum{ --tier:var(--platinum) }
+.tier-gold{ --tier:var(--gold) }
+.tier-silver{ --tier:var(--silver) }
+.tier-bronze{ --tier:var(--bronze) }
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.6}
+.header{position:sticky;top:0;z-index:10;background:rgba(10,10,10,.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.08);padding:14px 24px;display:flex;justify-content:space-between;align-items:center}
+.header a{color:#a3a3a3;text-decoration:none;font-size:.85rem}
+.badge-mock{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#000;background:var(--platinum);padding:4px 8px;border-radius:999px;font-weight:700}
+.hero{text-align:center;padding:56px 20px 32px}
+.hero h1{font-size:2.6rem;font-weight:800;letter-spacing:-.04em}
+.hero h1 span{background:linear-gradient(180deg,#fff,#888);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{color:var(--muted);max-width:560px;margin:12px auto 0}
+.wrap{max-width:1100px;margin:0 auto;padding:0 20px 60px}
+.tier{margin:36px 0}
+.tier-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.tier-head h2{font-size:.8rem;letter-spacing:.18em;text-transform:uppercase;color:var(--tier)}
+.tier-line{flex:1;height:1px;background:color-mix(in srgb,var(--tier) 35%,transparent)}
+.tier-count{font-size:.75rem;color:#666;border:1px solid #222;border-radius:999px;padding:2px 8px}
+.grid{display:grid;gap:14px}
+.grid-platinum{grid-template-columns:repeat(2,1fr)}
+.grid-gold{grid-template-columns:repeat(3,1fr)}
+.grid-silver{grid-template-columns:repeat(4,1fr)}
+.grid-bronze{grid-template-columns:repeat(6,1fr)}
+.card{background:var(--card);border:1px solid color-mix(in srgb,var(--tier) 45%,var(--border));border-radius:16px;overflow:hidden;text-align:center;position:relative}
+.card:hover{transform:translateY(-2px);transition:transform .15s,border-color .15s,box-shadow .15s}
+.tier-platinum .card{padding:22px 16px;box-shadow:0 0 0 1px color-mix(in srgb,var(--tier) 40%,transparent),0 12px 40px color-mix(in srgb,var(--tier) 18%,transparent)}
+.tier-gold .card{padding:18px 14px;box-shadow:0 0 0 1px color-mix(in srgb,var(--tier) 30%,transparent),0 8px 24px color-mix(in srgb,var(--tier) 12%,transparent)}
+.tier-silver .card{padding:16px 12px}
+.tier-bronze .card{padding:14px 10px}
+.avatar{margin:0 auto 10px;border-radius:50%;background:#222;display:flex;align-items:center;justify-content:center;color:var(--tier);font-weight:700;border:2px solid color-mix(in srgb,var(--tier) 35%,transparent);overflow:hidden;flex-shrink:0}
+.tier-platinum .avatar{width:96px;height:96px;font-size:1.8rem}
+.tier-gold .avatar{width:72px;height:72px;font-size:1.3rem}
+.tier-silver .avatar{width:56px;height:56px;font-size:1rem}
+.tier-bronze .avatar{width:48px;height:48px;font-size:.9rem}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.name{font-weight:600;color:#f0f0f0;line-height:1.2}
+.tier-platinum .name{font-size:1.05rem}
+.tier-gold .name{font-size:.95rem}
+.tier-silver .name{font-size:.9rem}
+.tier-bronze .name{font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.role{font-size:.78rem;color:#777;margin-top:4px}
+.tier-silver .role{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.tier-bronze .role{display:none}
+.card-socials{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+.social-link{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:#1e1e1e;border:1px solid #333;color:#999;text-decoration:none;font-size:.7rem;font-weight:700;transition:transform .15s,border-color .15s,color .15s,background .15s}
+.social-link:hover{transform:translateY(-1px);border-color:color-mix(in srgb,var(--tier) 50%,#333);color:#fff;background:#252525}
+.social-link:focus-visible{outline:2px solid var(--tier);outline-offset:2px}
+.social-link--img{overflow:hidden;padding:0}
+.social-link--img img{width:100%;height:100%;object-fit:cover;display:block}
+.social-link--text{width:auto;height:30px;padding:0 10px;border-radius:999px;font-size:.68rem}
+.tier-bronze .card-socials{display:none}
+.shine{position:absolute;inset:0;border-radius:16px;overflow:hidden;pointer-events:none}
+.shine::after{content:"";position:absolute;top:0;left:-60%;width:60%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.18),transparent);transform:skewX(-18deg);animation:shine 2.8s ease-in-out infinite}
+@keyframes shine{0%{left:-60%}60%{left:120%}100%{left:120%}}
+.note{margin-top:40px;padding:16px;border:1px dashed #333;border-radius:12px;color:#666;font-size:.8rem;text-align:center}
+@media(max-width:900px){
+  .grid-platinum{grid-template-columns:repeat(2,1fr)}
+  .grid-gold{grid-template-columns:repeat(2,1fr)}
+  .grid-silver{grid-template-columns:repeat(3,1fr)}
+  .grid-bronze{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:560px){
+  .grid-platinum,.grid-gold,.grid-silver,.grid-bronze{grid-template-columns:1fr}
+  .hero h1{font-size:1.9rem}
+}
+@media(prefers-reduced-motion:reduce){
+  .card:hover{transform:none}
+  .shine::after{animation:none;display:none}
+}
+</style>
+</head>
+<body>
+<div class="header"><span style="font-weight:700">Plano Aberto Filmes</span><span class="badge-mock">mock · apoiadores</span></div>
+<div class="hero"><h1><span>Apoiadores</span> do Projeto</h1><p>Mock estático — agrupado por nível Platinum → Bronze. Sem vermelho nos níveis. Seção vazia não renderiza.</p></div>
+<div class="wrap">
+
+<section class="tier tier-platinum">
+  <div class="tier-head"><h2>Platinum</h2><div class="tier-line"></div><span class="tier-count">2</span></div>
+  <div class="grid grid-platinum">
+    <div class="card"><div class="shine"></div><div class="avatar"><img src="https://i.pravatar.cc/200?img=12" alt="Ana Ribeiro"></div><p class="name">Ana Ribeiro</p><p class="role">Produtora · Apoiadora desde 2021 — viabilizou a mostra principal</p><div class="card-socials"><a class="social-link social-link--img" href="https://instagram.com/anaribeiro" target="_blank" rel="noopener noreferrer" title="Instagram" aria-label="Instagram de Ana Ribeiro"><img src="https://picsum.photos/seed/ig-ana/72/72" alt=""></a><a class="social-link social-link--text" href="https://anaribeiro.com" target="_blank" rel="noopener noreferrer" title="Site" aria-label="Site de Ana Ribeiro">Site</a><a class="social-link social-link--text" href="https://youtube.com/@anaribeiro" target="_blank" rel="noopener noreferrer" title="YouTube" aria-label="YouTube de Ana Ribeiro">YT</a></div></div>
+    <div class="card"><div class="shine"></div><div class="avatar"><img src="https://i.pravatar.cc/200?img=32" alt="Carlos Mendes"></div><p class="name">Carlos Mendes</p><p class="role">Diretor · Patrono da sala de montagem</p><div class="card-socials"><a class="social-link social-link--text" href="https://carlosmendes.film" target="_blank" rel="noopener noreferrer" title="Site" aria-label="Site de Carlos Mendes">Site</a><a class="social-link social-link--img" href="https://instagram.com/carlosmendes" target="_blank" rel="noopener noreferrer" title="Instagram" aria-label="Instagram de Carlos Mendes"><img src="https://picsum.photos/seed/ig-carlos/72/72" alt=""></a></div></div>
+  </div>
+</section>
+
+<section class="tier tier-gold">
+  <div class="tier-head"><h2>Gold</h2><div class="tier-line"></div><span class="tier-count">3</span></div>
+  <div class="grid grid-gold">
+    <div class="card"><div class="avatar"><img src="https://i.pravatar.cc/200?img=15" alt="Juliana Costa"></div><p class="name">Juliana Costa</p><p class="role">Roteirista · Apoio mensal</p><div class="card-socials"><a class="social-link social-link--img" href="https://instagram.com/juliana.costa" target="_blank" rel="noopener noreferrer" title="Instagram" aria-label="Instagram de Juliana Costa"><img src="https://picsum.photos/seed/ig-ju/72/72" alt=""></a><a class="social-link social-link--text" href="https://julianacosta.com" target="_blank" rel="noopener noreferrer" title="Site" aria-label="Site de Juliana Costa">Site</a></div></div>
+    <div class="card"><div class="avatar">MR</div><p class="name">Marcos Reis</p><p class="role">Fotógrafo · Cedeu equipamento</p><div class="card-socials"><a class="social-link social-link--text" href="https://instagram.com/marcosreis.foto" target="_blank" rel="noopener noreferrer" title="Instagram" aria-label="Instagram de Marcos Reis">IG</a></div></div>
+    <div class="card"><div class="avatar"><img src="https://i.pravatar.cc/200?img=8" alt="Fernanda Lima"></div><p class="name">Fernanda Lima</p><p class="role">Crítica de cinema</p><div class="card-socials"><a class="social-link social-link--text" href="https://youtube.com/@fernandalima" target="_blank" rel="noopener noreferrer" title="YouTube" aria-label="YouTube de Fernanda Lima">YT</a><a class="social-link social-link--img" href="https://instagram.com/fernandalima" target="_blank" rel="noopener noreferrer" title="Instagram" aria-label="Instagram de Fernanda Lima"><img src="https://picsum.photos/seed/ig-fe/72/72" alt=""></a></div></div>
+  </div>
+</section>
+
+<section class="tier tier-silver">
+  <div class="tier-head"><h2>Silver</h2><div class="tier-line"></div><span class="tier-count">4</span></div>
+  <div class="grid grid-silver">
+    <div class="card"><div class="avatar">JS</div><p class="name">João Silva</p><p class="role">Estudante de cinema apaixonado por clássicos brasileiros do acervo</p><div class="card-socials"><a class="social-link social-link--text" href="https://instagram.com/joaosilva" target="_blank" rel="noopener noreferrer" title="Instagram" aria-label="Instagram de João Silva">IG</a></div></div>
+    <div class="card"><div class="avatar"><img src="https://i.pravatar.cc/200?img=22" alt="Paula Rocha"></div><p class="name">Paula Rocha</p><p class="role">Professora · Indica filmes para turmas inteiras todo semestre</p><div class="card-socials"><a class="social-link social-link--text" href="https://paularocha.edu.br" target="_blank" rel="noopener noreferrer" title="Site" aria-label="Site de Paula Rocha">Site</a></div></div>
+    <div class="card"><div class="avatar">LT</div><p class="name">Lucas Tavares</p><p class="role">Editor · Ajuda na legenda de mostras</p><div class="card-socials"><a class="social-link social-link--text" href="https://youtube.com/@lucastavares" target="_blank" rel="noopener noreferrer" title="YouTube" aria-label="YouTube de Lucas Tavares">YT</a></div></div>
+    <div class="card"><div class="avatar"><img src="https://i.pravatar.cc/200?img=45" alt="Sofia Andrade"></div><p class="name">Sofia Andrade</p><p class="role">Designer · Criou cartazes voluntariamente</p><div class="card-socials"><a class="social-link social-link--img" href="https://instagram.com/sofia.andrade" target="_blank" rel="noopener noreferrer" title="Instagram" aria-label="Instagram de Sofia Andrade"><img src="https://picsum.photos/seed/ig-sofia/72/72" alt=""></a></div></div>
+  </div>
+</section>
+
+<section class="tier tier-bronze">
+  <div class="tier-head"><h2>Bronze</h2><div class="tier-line"></div><span class="tier-count">6</span></div>
+  <div class="grid grid-bronze">
+    <div class="card"><div class="avatar">AL</div><p class="name">André Luiz</p></div>
+    <div class="card"><div class="avatar"><img src="https://i.pravatar.cc/200?img=18" alt=""></div><p class="name">Beatriz F.</p></div>
+    <div class="card"><div class="avatar">CA</div><p class="name">Camila A.</p></div>
+    <div class="card"><div class="avatar">DR</div><p class="name">Diego R.</p></div>
+    <div class="card"><div class="avatar"><img src="https://i.pravatar.cc/200?img=28" alt=""></div><p class="name">Elisa M.</p></div>
+    <div class="card"><div class="avatar">FH</div><p class="name">Fábio H.</p></div>
+  </div>
+</section>
+
+<p class="note">Regras do mock: vars --bronze/#cd7f32 --silver/#c0c4cc --gold/#f5c518 --platinum/#e8f1ff · classes .tier-* só definem --tier · Platinum: avatar 96px + glow + brilho animado · Gold: médio + glow · Silver: descrição 1 linha · Bronze: só avatar + nome · prefers-reduced-motion desliga brilho</p>
+</div>
+</body>
+</html>
