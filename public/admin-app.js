@@ -879,7 +879,7 @@ async function loadPartners() {
     function socialCount(s) {
       try { const l = JSON.parse(s.social_links || '[]'); return l.length ? l.map(x => x.platform).join(', ') : '-'; } catch(e) { return '-'; }
     }
-    const TIER_COLORS = { platinum:'#e8f1ff', gold:'#f5c518', silver:'#c0c4cc', bronze:'#cd7f32' };
+    const TIER_COLORS = { platina:'#e8f1ff', platinum:'#e8f1ff', ouro:'#f5c518', gold:'#f5c518', prata:'#c0c4cc', silver:'#c0c4cc', bronze:'#cd7f32' };
     function tierBadge(tier){
       const n = String(tier||'').trim().toLowerCase();
       const color = TIER_COLORS[n] || '#888';

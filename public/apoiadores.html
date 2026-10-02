@@ -506,17 +506,17 @@
         function normalizeTier(v){ return String(v||'').trim().toLowerCase(); }
         function tierClass(v){
             const n = normalizeTier(v);
-            if(n==='platinum') return 'tier-platinum';
-            if(n==='gold') return 'tier-gold';
-            if(n==='silver') return 'tier-silver';
+            if(n==='platina'||n==='platinum') return 'tier-platinum';
+            if(n==='ouro'||n==='gold') return 'tier-gold';
+            if(n==='prata'||n==='silver') return 'tier-silver';
             if(n==='bronze') return 'tier-bronze';
             return 'tier-bronze';
         }
         function tierLabel(v){
             const n = normalizeTier(v);
-            if(n==='platinum') return 'Platinum';
-            if(n==='gold') return 'Gold';
-            if(n==='silver') return 'Silver';
+            if(n==='platina'||n==='platinum') return 'Platina';
+            if(n==='ouro'||n==='gold') return 'Ouro';
+            if(n==='prata'||n==='silver') return 'Prata';
             return 'Bronze';
         }
         function platformIcon(link){
@@ -545,7 +545,7 @@
                 : `<img src="/logo.png" alt="${s.name}" style="object-fit:contain;padding:8px;background:#0f0f0f;">`;
             const tierCls = tierClass(s.tier);
             const isBronze = normalizeTier(s.tier)==='bronze';
-            const isPlatinum = normalizeTier(s.tier)==='platinum';
+            const isPlatinum = ['platina','platinum'].includes(normalizeTier(s.tier));
             let social = '';
             try {
                 if (s.social_links) {
@@ -579,9 +579,9 @@
                 const rawSupporters = await resSupporters.json();
                 const supporters = rawSupporters.filter(s => s.status === 'active');
                 const container = document.getElementById('supporters-tiers');
-                const order = ['platinum','gold','silver','bronze'];
-                const groups = {platinum:[],gold:[],silver:[],bronze:[]};
-                supporters.forEach(s=>{ const k=normalizeTier(s.tier); (groups[k]||groups.bronze).push(s); });
+                const order = ['platina','ouro','prata','bronze'];
+                const groups = {platina:[],ouro:[],prata:[],bronze:[]};
+                supporters.forEach(s=>{ const k={platinum:'platina',platina:'platina',gold:'ouro',ouro:'ouro',silver:'prata',prata:'prata',bronze:'bronze'}[normalizeTier(s.tier)]||'bronze'; (groups[k]||groups.bronze).push(s); });
                 order.forEach(k=> groups[k].sort((a,b)=> String(a.name||'').localeCompare(String(b.name||''),'pt-BR')));
                 const hasAny = order.some(k=> groups[k].length>0);
                 if(!hasAny){ container.innerHTML='<p style="color:#555; padding:1rem;">Nenhum apoiador listado ainda.</p>'; }

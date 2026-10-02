@@ -488,9 +488,9 @@
         }
         function tierLabel(v){
             const n = normalizeTier(v);
-            if(n==='platinum') return 'Platinum';
-            if(n==='gold') return 'Gold';
-            if(n==='silver') return 'Silver';
+            if(n==='platina'||n==='platinum') return 'Platina';
+            if(n==='ouro'||n==='gold') return 'Ouro';
+            if(n==='prata'||n==='silver') return 'Prata';
             return 'Bronze';
         }
         function platformIcon(link){
@@ -514,7 +514,7 @@
         function sponsorCard(s) {
             const initials = s.name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
             const styleTier = tierClass(s.tier);
-            const isPlatinum = normalizeTier(s.tier)==='platinum';
+            const isPlatinum = ['platina','platinum'].includes(normalizeTier(s.tier));
             const isBronze = normalizeTier(s.tier)==='bronze';
             const logo = s.logo_url ? `<img src="${s.logo_url}" alt="${s.name}" onerror="this.onerror=null;this.src='/logo.png';this.style.objectFit='contain';this.style.padding='8px';this.style.background='#0f0f0f';">` : `<img src="/logo.png" alt="${s.name}" style="object-fit:contain;padding:8px;background:#0f0f0f;">`;
             let social = '';
@@ -561,9 +561,9 @@
                 const rawSponsors = await resSponsors.json();
                 const sponsors = rawSponsors.filter(s => s.status === 'active');
                 const container = document.getElementById('sponsors-tiers');
-                const order = ['platinum','gold','silver','bronze'];
-                const groups = {platinum:[],gold:[],silver:[],bronze:[]};
-                sponsors.forEach(s=>{ const k=normalizeTier(s.tier); (groups[k]||groups.bronze).push(s); });
+                const order = ['platina','ouro','prata','bronze'];
+                const groups = {platina:[],ouro:[],prata:[],bronze:[]};
+                sponsors.forEach(s=>{ const k={platinum:'platina',platina:'platina',gold:'ouro',ouro:'ouro',silver:'prata',prata:'prata',bronze:'bronze'}[normalizeTier(s.tier)]||'bronze'; (groups[k]||groups.bronze).push(s); });
                 order.forEach(k=> groups[k].sort((a,b)=> String(a.name||'').localeCompare(String(b.name||''),'pt-BR')));
                 const hasAny = order.some(k=> groups[k].length>0);
                 if(!hasAny){ container.innerHTML = emptyMsg; }
