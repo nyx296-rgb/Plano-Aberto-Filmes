@@ -539,7 +539,7 @@
             const hasPhoto = !!s.photo_url;
             const logo = hasPhoto
                 ? `<img src="${s.photo_url}" alt="${s.name}" onerror="this.onerror=null;this.src='/logo.png';this.style.objectFit='contain';this.style.padding='8px';this.style.background='#0f0f0f';">`
-                : `<div class="sp-logo sp-logo--person">${initials}</div>`;
+                : `<img src="/logo.png" alt="${s.name}" style="object-fit:contain;padding:8px;background:#0f0f0f;">`;
             const tierCls = tierClass(s.tier);
             const isBronze = normalizeTier(s.tier)==='bronze';
             const isPlatinum = normalizeTier(s.tier)==='platinum';

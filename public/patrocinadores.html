@@ -505,7 +505,7 @@
             const styleTier = tierClass(s.tier);
             const isPlatinum = normalizeTier(s.tier)==='platinum';
             const isBronze = normalizeTier(s.tier)==='bronze';
-            const logo = s.logo_url ? `<img src="${s.logo_url}" alt="${s.name}" onerror="this.onerror=null;this.src='/logo.png';this.style.objectFit='contain';this.style.padding='8px';this.style.background='#0f0f0f';">` : `<div class="sp-logo">${initials}</div>`;
+            const logo = s.logo_url ? `<img src="${s.logo_url}" alt="${s.name}" onerror="this.onerror=null;this.src='/logo.png';this.style.objectFit='contain';this.style.padding='8px';this.style.background='#0f0f0f';">` : `<img src="/logo.png" alt="${s.name}" style="object-fit:contain;padding:8px;background:#0f0f0f;">`;
             let social = '';
             try {
                 if (s.social_links) {
