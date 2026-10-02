@@ -3,32 +3,55 @@ const router = express.Router();
 const db = require('../db/database');
 const { authenticateToken } = require('./auth');
 
-const VALID_TIERS_SUPPORTER = ['Gold', 'Silver', 'Bronze'];
+const VALID_TIERS_SUPPORTER = ['Platinum', 'Gold', 'Silver', 'Bronze'];
 const VALID_TIERS_SPONSOR = ['Platinum', 'Gold', 'Silver', 'Bronze'];
 const VALID_STATUSES = ['active', 'inactive'];
+const TIER_ORDER = { platinum: 0, gold: 1, silver: 2, bronze: 3 };
+const CANONICAL_TIER = { platinum: 'Platinum', gold: 'Gold', silver: 'Silver', bronze: 'Bronze' };
 
 function sanitize(str, maxLen = 200) {
   return str ? String(str).substring(0, maxLen) : null;
+}
+function normalizeTier(t) {
+  return String(t || '').trim().toLowerCase();
+}
+function canonicalTier(t) {
+  const n = normalizeTier(t);
+  return CANONICAL_TIER[n] || null;
+}
+function isValidTier(t, allowed) {
+  const n = normalizeTier(t);
+  return allowed.map((x) => x.toLowerCase()).includes(n);
+}
+function sortByTierAndName(list) {
+  return [...list].sort((a, b) => {
+    const ta = normalizeTier(a.tier);
+    const tb = normalizeTier(b.tier);
+    const oa = TIER_ORDER[ta] ?? 99;
+    const ob = TIER_ORDER[tb] ?? 99;
+    if (oa !== ob) return oa - ob;
+    return String(a.name || '').localeCompare(String(b.name || ''), 'pt-BR');
+  });
 }
 
 // Public: List supporters
 router.get('/supporters', (req, res) => {
   const list = db.prepare('SELECT * FROM supporters').all();
-  res.json(list);
+  res.json(sortByTierAndName(list));
 });
 
 // Public: List sponsors
 router.get('/sponsors', (req, res) => {
   const list = db.prepare('SELECT * FROM sponsors').all();
-  res.json(list);
+  res.json(sortByTierAndName(list));
 });
 
 // Admin: Add supporter
 router.post('/supporters', authenticateToken, (req, res) => {
   const { name, photo_url, tier, status, description, social_links } = req.body;
   if (!name) return res.status(400).json({ error: 'Name required' });
-  const safeTier = VALID_TIERS_SUPPORTER.includes(tier) ? tier : 'Gold';
-  const safeStatus = VALID_STATUSES.includes(status) ? status : 'active';
+  const safeTier = canonicalTier(tier) && isValidTier(tier, VALID_TIERS_SUPPORTER) ? canonicalTier(tier) : 'Gold';
+  const safeStatus = VALID_STATUSES.includes(String(status || '').trim().toLowerCase()) ? String(status).trim().toLowerCase() : 'active';
   let socialLinksJson = null;
   if (social_links && Array.isArray(social_links)) {
     socialLinksJson = JSON.stringify(social_links);
@@ -43,8 +66,8 @@ router.post('/supporters', authenticateToken, (req, res) => {
 // Admin: Update supporter
 router.put('/supporters/:id', authenticateToken, (req, res) => {
   const { name, photo_url, tier, status, description, social_links } = req.body;
-  const safeTier = VALID_TIERS_SUPPORTER.includes(tier) ? tier : 'Gold';
-  const safeStatus = VALID_STATUSES.includes(status) ? status : 'active';
+  const safeTier = canonicalTier(tier) && isValidTier(tier, VALID_TIERS_SUPPORTER) ? canonicalTier(tier) : 'Gold';
+  const safeStatus = VALID_STATUSES.includes(String(status || '').trim().toLowerCase()) ? String(status).trim().toLowerCase() : 'active';
   let socialLinksJson = null;
   if (social_links && Array.isArray(social_links)) {
     socialLinksJson = JSON.stringify(social_links);
@@ -66,8 +89,8 @@ router.delete('/supporters/:id', authenticateToken, (req, res) => {
 router.post('/sponsors', authenticateToken, (req, res) => {
   const { name, logo_url, tier, status, description, instagram, website, social_links } = req.body;
   if (!name) return res.status(400).json({ error: 'Name required' });
-  const safeTier = VALID_TIERS_SPONSOR.includes(tier) ? tier : 'Platinum';
-  const safeStatus = VALID_STATUSES.includes(status) ? status : 'active';
+  const safeTier = canonicalTier(tier) && isValidTier(tier, VALID_TIERS_SPONSOR) ? canonicalTier(tier) : 'Platinum';
+  const safeStatus = VALID_STATUSES.includes(String(status || '').trim().toLowerCase()) ? String(status).trim().toLowerCase() : 'active';
   
   let socialLinksJson = null;
   if (social_links && Array.isArray(social_links)) {
@@ -84,8 +107,8 @@ router.post('/sponsors', authenticateToken, (req, res) => {
 // Admin: Update sponsor
 router.put('/sponsors/:id', authenticateToken, (req, res) => {
   const { name, logo_url, tier, status, description, instagram, website, social_links } = req.body;
-  const safeTier = VALID_TIERS_SPONSOR.includes(tier) ? tier : 'Platinum';
-  const safeStatus = VALID_STATUSES.includes(status) ? status : 'active';
+  const safeTier = canonicalTier(tier) && isValidTier(tier, VALID_TIERS_SPONSOR) ? canonicalTier(tier) : 'Platinum';
+  const safeStatus = VALID_STATUSES.includes(String(status || '').trim().toLowerCase()) ? String(status).trim().toLowerCase() : 'active';
   
   let socialLinksJson = null;
   if (social_links && Array.isArray(social_links)) {
