@@ -15,7 +15,15 @@
             --paf-dark: #0a0a0a;
             --paf-card: #141414;
             --paf-border: rgba(255,255,255,0.1);
+            --bronze: #cd7f32;
+            --silver: #c0c4cc;
+            --gold: #f5c518;
+            --platinum: #e8f1ff;
         }
+        .tier-platinum { --tier: var(--platinum); }
+        .tier-gold { --tier: var(--gold); }
+        .tier-silver { --tier: var(--silver); }
+        .tier-bronze { --tier: var(--bronze); }
 
         .site-header {
             position: fixed;
@@ -155,163 +163,68 @@
             color: #fff;
         }
 
-        .sp-tier {
-            margin-bottom: 2rem;
-        }
-
-        .sp-tier-label {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 1rem;
-        }
-
-        .sp-tier-line {
-            flex: 1;
-            height: 1px;
-            background: #333;
-        }
-
-        .sp-badge {
-            font-size: 10px;
-            font-weight: 500;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            padding: 3px 10px;
-            border-radius: 999px;
-            white-space: nowrap;
-        }
-
-        .sp-badge--gold   { background: rgba(212,168,58,0.15); color: #d4a83a; border: 1px solid rgba(212,168,58,0.3); }
-        .sp-badge--silver { background: rgba(255,255,255,0.08); color: #aaa; border: 1px solid rgba(255,255,255,0.15); }
-        .sp-badge--bronze { background: rgba(200,132,90,0.15); color: #c8845a; border: 1px solid rgba(200,132,90,0.3); }
-
-        .sp-track-wrap {
-            overflow-x: auto;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-            cursor: grab;
-            padding-bottom: 4px;
-        }
-
+        .tier-section { margin-bottom: 2.5rem; }
+        .tier-head { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+        .tier-head h3 { font-size:.78rem; letter-spacing:.18em; text-transform:uppercase; color:var(--tier); margin:0; }
+        .tier-line { flex:1; height:1px; background: color-mix(in srgb, var(--tier) 35%, transparent); }
+        .tier-count { font-size:.72rem; color:#666; border:1px solid #222; border-radius:999px; padding:2px 8px; }
+        .sp-track-wrap { overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; cursor: grab; padding-bottom: 4px; }
         .sp-track-wrap:active { cursor: grabbing; }
         .sp-track-wrap::-webkit-scrollbar { display: none; }
-
-        .sp-track {
-            display: flex;
-            gap: 14px;
-            width: max-content;
-        }
-
+        .sp-track { display: flex; gap: 14px; width: max-content; }
+        @media (max-width: 640px) { .sp-track{ display:grid; grid-template-columns:1fr; width:100%; } .sp-track .sp-card{ width:100%; } }
         .sp-card {
             width: 200px;
-            min-height: 300px;
+            min-height: 260px;
             background: #141414;
-            border: 1px solid #333;
+            border: 1px solid color-mix(in srgb, var(--tier, #333) 45%, #333);
             border-radius: 12px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
             flex-shrink: 0;
-            transition: border-color 0.15s, transform 0.15s;
+            transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+            position: relative;
         }
-
-        .sp-card:hover {
-            border-color: #555;
-            transform: translateY(-2px);
-        }
-
-        .sp-card--gold {
-            border-color: #a07820;
-        }
-
-        .sp-card--gold:hover {
-            border-color: #d4a83a;
-        }
-
-        .sp-card-top {
-            height: 160px;
-            background: #1a1a1a;
-            border-bottom: 1px solid #333;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            overflow: hidden;
-        }
-
-        .sp-card-top img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .sp-logo {
-            width: 80px;
-            height: 80px;
-            border-radius: 12px;
-            background: #2a2a2a;
-            border: 1px solid #444;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            font-weight: 600;
-            color: #f0f0f0;
-        }
-
-        .sp-card-body {
-            padding: 14px 14px 8px;
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-            gap: 3px;
-        }
-
-        .sp-card-name {
-            font-size: 14px;
-            font-weight: 500;
-            color: #f0f0f0;
-            margin: 0;
-        }
-
-        .sp-card-type {
-            font-size: 11px;
-            color: #777;
-            margin: 0 0 6px;
-        }
-
-        .sp-card-footer {
-            padding: 0 14px 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .sp-card-divider {
-            height: 1px;
-            background: #333;
-            margin-bottom: 4px;
-        }
-
-        .sp-social {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            color: #777;
-            text-decoration: none;
-            transition: color 0.15s;
-        }
-
-        .sp-social:hover {
-            color: #f0f0f0;
-        }
-
-        .sp-social i {
-            font-size: 14px;
-            flex-shrink: 0;
-        }
+        .sp-card:hover { border-color: color-mix(in srgb, var(--tier, #555) 60%, #555); transform: translateY(-2px); }
+        .tier-platinum .sp-card { border-width:1.5px; box-shadow: 0 0 0 1px color-mix(in srgb, var(--tier) 35%, transparent), 0 12px 32px color-mix(in srgb, var(--tier) 16%, transparent); }
+        .tier-gold .sp-card { box-shadow: 0 0 0 1px color-mix(in srgb, var(--tier) 28%, transparent), 0 8px 22px color-mix(in srgb, var(--tier) 11%, transparent); }
+        .sp-card-top { background: #1a1a1a; border-bottom: 1px solid #333; display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
+        .tier-platinum .sp-card-top { height: 132px; }
+        .tier-gold .sp-card-top { height: 110px; }
+        .tier-silver .sp-card-top { height: 90px; }
+        .tier-bronze .sp-card-top { height: 72px; }
+        .sp-card-top img { width: 100%; height: 100%; object-fit: cover; }
+        .sp-logo { border-radius: 12px; background: #2a2a2a; border: 1px solid #444; display: flex; align-items: center; justify-content: center; font-weight: 600; color: #f0f0f0; }
+        .tier-platinum .sp-logo { width:96px; height:96px; font-size:22px; border-radius:16px; border-width:2px; border-color: color-mix(in srgb, var(--tier) 40%, #444); }
+        .tier-gold .sp-logo { width:72px; height:72px; font-size:18px; }
+        .tier-silver .sp-logo { width:56px; height:56px; font-size:14px; border-radius:50%; }
+        .tier-bronze .sp-logo { width:40px; height:40px; font-size:12px; }
+        .sp-card-body { padding: 14px 14px 8px; display: flex; flex-direction: column; flex: 1; gap: 3px; }
+        .sp-card-name { font-size: 14px; font-weight: 500; color: #f0f0f0; margin: 0; }
+        .tier-platinum .sp-card-name { font-size:15px; font-weight:700; }
+        .tier-gold .sp-card-name { font-size:14px; font-weight:600; }
+        .tier-bronze .sp-card-name { font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .sp-card-type { font-size: 11px; color: #777; margin: 0 0 6px; }
+        .tier-silver .sp-card-type { display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden; }
+        .tier-bronze .sp-card-type { display:none; }
+        .sp-card-footer { padding: 0 14px 14px; display: flex; flex-direction: column; gap: 5px; }
+        .tier-bronze .sp-card-footer { display:none; }
+        .sp-card-divider { height: 1px; background: #333; margin-bottom: 4px; }
+        .sp-social { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #777; text-decoration: none; transition: color 0.15s; }
+        .sp-social:hover { color: #f0f0f0; }
+        .sp-social i { font-size: 14px; flex-shrink: 0; }
+        .card-socials { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+        .social-link { display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:50%; background:#1e1e1e; border:1px solid #333; color:#999; text-decoration:none; font-size:.68rem; font-weight:700; transition:transform .15s, border-color .15s, color .15s, background .15s; }
+        .social-link:hover { transform:translateY(-1px); border-color: color-mix(in srgb, var(--tier) 50%, #333); color:#fff; background:#252525; }
+        .social-link:focus-visible { outline:2px solid var(--tier); outline-offset:2px; }
+        .social-link--img { overflow:hidden; padding:0; }
+        .social-link--img img { width:100%; height:100%; object-fit:cover; display:block; }
+        .social-link--text { width:auto; height:28px; padding:0 10px; border-radius:999px; }
+        .shine { position:absolute; inset:0; border-radius:12px; overflow:hidden; pointer-events:none; }
+        .shine::after { content:""; position:absolute; top:0; left:-60%; width:60%; height:100%; background: linear-gradient(100deg, transparent, rgba(255,255,255,.16), transparent); transform:skewX(-18deg); animation: shine 2.8s ease-in-out infinite; }
+        @keyframes shine { 0%{left:-60%} 60%{left:120%} 100%{left:120%} }
+        @media (prefers-reduced-motion: reduce) { .sp-card:hover{transform:none} .shine::after{animation:none; display:none} }
 
         .connect-section {
             display: grid;
@@ -501,39 +414,7 @@
                     <span class="sp-eyebrow">Business Partners</span>
                     <h2 class="sp-title">Nossos Patrocinadores</h2>
                 </div>
-
-                <!-- NÍVEL OURO -->
-                <div class="sp-tier">
-                    <div class="sp-tier-label">
-                        <span class="sp-badge sp-badge--gold">Ouro</span>
-                        <span class="sp-tier-line"></span>
-                    </div>
-                    <div class="sp-track-wrap">
-                        <div class="sp-track" id="sponsors-gold"></div>
-                    </div>
-                </div>
-
-                <!-- NÍVEL PRATA -->
-                <div class="sp-tier">
-                    <div class="sp-tier-label">
-                        <span class="sp-badge sp-badge--silver">Prata</span>
-                        <span class="sp-tier-line"></span>
-                    </div>
-                    <div class="sp-track-wrap">
-                        <div class="sp-track" id="sponsors-silver"></div>
-                    </div>
-                </div>
-
-                <!-- NÍVEL BRONZE -->
-                <div class="sp-tier">
-                    <div class="sp-tier-label">
-                        <span class="sp-badge sp-badge--bronze">Bronze</span>
-                        <span class="sp-tier-line"></span>
-                    </div>
-                    <div class="sp-track-wrap">
-                        <div class="sp-track" id="sponsors-bronze"></div>
-                    </div>
-                </div>
+                <div id="sponsors-tiers"></div>
             </div>
         </div>
 
@@ -583,52 +464,62 @@
     </div>
 
     <script>
-        function sponsorCard(s, tier) {
-            const goldClass = tier === 'gold' ? ' sp-card--gold' : '';
+        function normalizeTier(v){ return String(v||'').trim().toLowerCase(); }
+        function tierClass(v){
+            const n = normalizeTier(v);
+            if(n==='platinum') return 'tier-platinum';
+            if(n==='gold') return 'tier-gold';
+            if(n==='silver') return 'tier-silver';
+            return 'tier-bronze';
+        }
+        function tierLabel(v){
+            const n = normalizeTier(v);
+            if(n==='platinum') return 'Platinum';
+            if(n==='gold') return 'Gold';
+            if(n==='silver') return 'Silver';
+            return 'Bronze';
+        }
+        function sponsorCard(s) {
             const initials = s.name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
-            const logo = s.logo_url
-                ? `<img src="${s.logo_url}" alt="${s.name}">`
-                : `<div class="sp-logo">${initials}</div>`;
-            
+            const styleTier = tierClass(s.tier);
+            const isPlatinum = normalizeTier(s.tier)==='platinum';
+            const isBronze = normalizeTier(s.tier)==='bronze';
+            const logo = s.logo_url ? `<img src="${s.logo_url}" alt="${s.name}">` : `<div class="sp-logo">${initials}</div>`;
             let social = '';
-            
-            // Dynamic Links
-            try {
-                if (s.social_links) {
-                    const links = JSON.parse(s.social_links);
-                    if (links && links.length > 0) {
-                        social += `<div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">`;
-                        links.forEach(link => {
-                            if (link.icon_url) {
-                                social += `<a href="${link.url}" target="_blank" rel="noopener" title="${link.platform}" style="display:inline-block; width:36px; height:36px; border-radius:50%; overflow:hidden; border:2px solid rgba(255,255,255,0.1); transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-                                    <img src="${link.icon_url}" style="width:100%; height:100%; object-fit:cover;">
-                                </a>`;
-                            } else {
-                                social += `<a class="sp-social" href="${link.url}" target="_blank" rel="noopener">${link.platform}</a>`;
-                            }
-                        });
-                        social += `</div>`;
+            if(!isBronze){
+                try {
+                    if (s.social_links) {
+                        const links = JSON.parse(s.social_links);
+                        if (links && links.length > 0) {
+                            social += `<div class="card-socials">`;
+                            links.forEach(link => {
+                                const href = String(link.url||'').trim();
+                                const plat = String(link.platform||'Link').trim();
+                                if(!href) return;
+                                if (link.icon_url) {
+                                    social += `<a class="social-link social-link--img" href="${href}" target="_blank" rel="noopener noreferrer" title="${plat}" aria-label="${plat} de ${s.name}"><img src="${link.icon_url}" alt=""></a>`;
+                                } else {
+                                    social += `<a class="social-link social-link--text" href="${href}" target="_blank" rel="noopener noreferrer" title="${plat}" aria-label="${plat} de ${s.name}">${plat.slice(0,12)}</a>`;
+                                }
+                            });
+                            social += `</div>`;
+                        }
+                    } else {
+                        const ig = s.instagram ? s.instagram.replace('@','') : '';
+                        const web = s.website ? s.website.replace(/^https?:\/\//,'').replace(/\/$/,'') : '';
+                        if (s.instagram || s.website) {
+                            social += `<div class="card-socials">`;
+                            if (s.instagram) social += `<a class="social-link social-link--text" href="https://instagram.com/${ig}" target="_blank" rel="noopener noreferrer" title="${s.instagram}" aria-label="Instagram de ${s.name}">${s.instagram.slice(0,12)}</a>`;
+                            if (s.website) social += `<a class="social-link social-link--text" href="${s.website}" target="_blank" rel="noopener noreferrer" title="${web}" aria-label="Site de ${s.name}">Site</a>`;
+                            social += `</div>`;
+                        }
                     }
-                } else {
-                    // Fallback to legacy fields if JSON doesn't exist yet
-                    const ig = s.instagram ? s.instagram.replace('@','') : '';
-                    const web = s.website ? s.website.replace(/^https?:\/\//,'').replace(/\/$/,'') : '';
-                    if (s.instagram) social += `<a class="sp-social" href="https://instagram.com/${ig}" target="_blank" rel="noopener"><i class="ti ti-brand-instagram" aria-hidden="true"></i>${s.instagram}</a>`;
-                    if (s.website) social += `<a class="sp-social" href="${s.website}" target="_blank" rel="noopener"><i class="ti ti-world" aria-hidden="true"></i>${web}</a>`;
-                }
-            } catch (e) {
-                console.error("Error parsing social_links", e);
+                } catch (e) {}
             }
-
-            return `
-            <div class="sp-card${goldClass}">
-                <div class="sp-card-top">${logo}</div>
-                <div class="sp-card-body">
-                    <p class="sp-card-name">${s.name}</p>
-                    <p class="sp-card-type">${s.description || ''}</p>
-                </div>
-                ${social ? `<div class="sp-card-footer"><div class="sp-card-divider"></div>${social}</div>` : ''}
-            </div>`;
+            const shine = isPlatinum ? `<div class="shine"></div>` : '';
+            const desc = s.description ? `<p class="sp-card-type">${s.description}</p>` : '';
+            const footer = social ? `<div class="sp-card-footer"><div class="sp-card-divider"></div>${social}</div>` : '';
+            return `<div class="sp-card ${styleTier}">${shine}<div class="sp-card-top">${logo}</div><div class="sp-card-body"><p class="sp-card-name">${s.name}</p>${desc}</div>${footer}</div>`;
         }
 
         const emptyMsg = '<p style="color:#555; padding:1rem;">Seja nosso primeiro patrocinador.</p>';
@@ -638,18 +529,22 @@
                 const resSponsors = await fetch('/api/partners/sponsors');
                 const rawSponsors = await resSponsors.json();
                 const sponsors = rawSponsors.filter(s => s.status === 'active');
-
-                const goldEl = document.getElementById('sponsors-gold');
-                const silverEl = document.getElementById('sponsors-silver');
-                const bronzeEl = document.getElementById('sponsors-bronze');
-
-                const gold = sponsors.filter(s => /platinum|gold/i.test(s.tier));
-                const silver = sponsors.filter(s => /silver/i.test(s.tier));
-                const bronze = sponsors.filter(s => /bronze/i.test(s.tier));
-
-                goldEl.innerHTML = gold.length ? gold.map(s => sponsorCard(s, 'gold')).join('') : emptyMsg;
-                silverEl.innerHTML = silver.length ? silver.map(s => sponsorCard(s, 'silver')).join('') : emptyMsg;
-                bronzeEl.innerHTML = bronze.length ? bronze.map(s => sponsorCard(s, 'bronze')).join('') : emptyMsg;
+                const container = document.getElementById('sponsors-tiers');
+                const order = ['platinum','gold','silver','bronze'];
+                const groups = {platinum:[],gold:[],silver:[],bronze:[]};
+                sponsors.forEach(s=>{ const k=normalizeTier(s.tier); (groups[k]||groups.bronze).push(s); });
+                order.forEach(k=> groups[k].sort((a,b)=> String(a.name||'').localeCompare(String(b.name||''),'pt-BR')));
+                const hasAny = order.some(k=> groups[k].length>0);
+                if(!hasAny){ container.innerHTML = emptyMsg; }
+                else {
+                    container.innerHTML = order.filter(k=> groups[k].length>0).map(k=>{
+                        const label = tierLabel(k);
+                        const cls = 'tier-'+k;
+                        const count = groups[k].length;
+                        const cards = groups[k].map(s=> sponsorCard(s)).join('');
+                        return `<section class="tier-section ${cls}"><div class="tier-head"><h3>${label}</h3><div class="tier-line"></div><span class="tier-count">${count}</span></div><div class="sp-track-wrap"><div class="sp-track">${cards}</div></div></section>`;
+                    }).join('');
+                }
             } catch (e) { console.error('Load data error:', e); }
 
             try {
