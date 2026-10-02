@@ -171,13 +171,25 @@
         .sp-track-wrap { overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; cursor: grab; padding-bottom: 4px; }
         .sp-track-wrap:active { cursor: grabbing; }
         .sp-track-wrap::-webkit-scrollbar { display: none; }
-        .sp-track { display: flex; gap: 14px; width: max-content; }
-        @media (max-width: 640px) { .sp-track{ display:grid; grid-template-columns:1fr; width:100%; } .sp-track .sp-card{ width:100%; } }
+        .sp-track { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:14px; width:100%; }
+        .tier-platinum .sp-track { grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); }
+        .tier-gold .sp-track { grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); }
+        .empty-cta { border:1px dashed color-mix(in srgb,var(--tier) 35%,#333); border-radius:14px; padding:22px; text-align:center; color:var(--muted); background:rgba(255,255,255,.02); }
+        .empty-cta a { display:inline-flex; margin-top:10px; padding:8px 14px; background:var(--tier); color:#000; border-radius:999px; text-decoration:none; font-weight:700; font-size:.82rem; }
+        .empty-cta a:hover { opacity:.9; }
+        @media (max-width: 640px) {
+            .sp-track, .tier-platinum .sp-track, .tier-gold .sp-track { display:flex; gap:14px; width:max-content; }
+            .sp-track .sp-card { width:170px; flex:0 0 170px; }
+            .tier-platinum .sp-track .sp-card { width:210px; flex:0 0 210px; }
+            .tier-gold .sp-track .sp-card { width:190px; flex:0 0 190px; }
+            .sp-track-wrap { scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch; }
+        }
         .sp-card {
-            width: 200px;
+            width: 100%;
             min-height: 260px;
             background: #141414;
             border: 1px solid color-mix(in srgb, var(--tier, #333) 45%, #333);
+            border-top: 3px solid var(--tier);
             border-radius: 12px;
             display: flex;
             flex-direction: column;
@@ -187,17 +199,16 @@
             position: relative;
         }
         .sp-card:hover { border-color: color-mix(in srgb, var(--tier, #555) 60%, #555); transform: translateY(-2px); }
-        .tier-platinum .sp-card { width: 240px; min-height: 300px; border-width:1.5px; box-shadow: 0 0 0 1px color-mix(in srgb, var(--tier) 45%, transparent), 0 14px 36px color-mix(in srgb, var(--tier) 18%, transparent); }
-        .tier-gold .sp-card { width: 210px; min-height: 270px; box-shadow: 0 0 0 1px color-mix(in srgb, var(--tier) 28%, transparent), 0 8px 22px color-mix(in srgb, var(--tier) 11%, transparent); }
-        .tier-silver .sp-card { width: 190px; min-height: 240px; }
-        .tier-bronze .sp-card { width: 170px; min-height: 200px; }
+        .tier-platinum .sp-card { min-height: 310px; border-width:1.5px; border-top:4px solid var(--tier); box-shadow: 0 0 0 1px color-mix(in srgb, var(--tier) 45%, transparent), 0 16px 40px color-mix(in srgb, var(--tier) 20%, transparent); }
+        .tier-gold .sp-card { min-height: 270px; box-shadow: 0 0 0 1px color-mix(in srgb, var(--tier) 28%, transparent), 0 8px 22px color-mix(in srgb, var(--tier) 11%, transparent); }
+        .tier-silver .sp-card { min-height: 240px; }
+        .tier-bronze .sp-card { min-height: 200px; }
         .sp-card-top { background: #1a1a1a; border-bottom: 1px solid #333; display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; padding: 12px; }
         .tier-platinum .sp-card-top { height: 140px; }
         .tier-gold .sp-card-top { height: 116px; }
         .tier-silver .sp-card-top { height: 102px; }
         .tier-bronze .sp-card-top { height: 92px; }
-        .sp-card-top > img { object-fit:cover; border-radius: 12px; border: 1px solid color-mix(in srgb, var(--tier) 25%, #333); display:block; flex-shrink:0; width:100%; height:100%; }
-        .tier-platinum .sp-card-top > img, .tier-gold .sp-card-top > img { object-fit:contain; padding:8px; background:#0f0f0f; }
+        .sp-card-top > img { object-fit:contain; border-radius: 12px; border: 1px solid color-mix(in srgb, var(--tier) 25%, #333); display:block; flex-shrink:0; width:100%; height:100%; padding:8px; background:#0f0f0f; }
         .sp-logo { border-radius: 12px; background: #2a2a2a; border: 1px solid #444; display: flex; align-items: center; justify-content: center; font-weight: 600; color: #f0f0f0; }
         .tier-platinum .sp-logo { width:96px; height:96px; font-size:22px; border-radius:16px; border-width:2px; border-color: color-mix(in srgb, var(--tier) 40%, #444); }
         .tier-gold .sp-logo { width:72px; height:72px; font-size:18px; }
@@ -557,12 +568,15 @@
                 const hasAny = order.some(k=> groups[k].length>0);
                 if(!hasAny){ container.innerHTML = emptyMsg; }
                 else {
-                    container.innerHTML = order.filter(k=> groups[k].length>0).map(k=>{
+                    container.innerHTML = order.map(k=>{
                         const label = tierLabel(k);
                         const cls = 'tier-'+k;
                         const count = groups[k].length;
-                        const cards = groups[k].map(s=> sponsorCard(s)).join('');
-                        return `<section class="tier-section ${cls}"><div class="tier-head"><h3>${label}</h3><div class="tier-line"></div><span class="tier-count">${count}</span></div><div class="sp-track-wrap"><div class="sp-track">${cards}</div></div></section>`;
+                        if(count>0){
+                            const cards = groups[k].map(s=> sponsorCard(s)).join('');
+                            return `<section class="tier-section ${cls}"><div class="tier-head"><h3>${label}</h3><div class="tier-line"></div><span class="tier-count">${count}</span></div><div class="sp-track-wrap"><div class="sp-track">${cards}</div></div></section>`;
+                        }
+                        return `<section class="tier-section ${cls}"><div class="tier-head"><h3>${label}</h3><div class="tier-line"></div><span class="tier-count">0</span></div><div class="empty-cta"><div style="color:var(--tier);font-weight:700;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase">${label}</div><div style="margin-top:6px">Seja o primeiro patrocinador ${label}</div><a href="#contato">Falar conosco</a></div></section>`;
                     }).join('');
                 }
             } catch (e) { console.error('Load data error:', e); }
