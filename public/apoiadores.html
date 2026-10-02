@@ -515,11 +515,10 @@
             return 'https://'+s.replace(/^\/+/, '');
         }
         function supporterCard(s) {
-            const initials = s.name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
             const hasPhoto = !!s.photo_url;
             const avatar = hasPhoto
                 ? `<div class="avatar"><img src="${s.photo_url}" alt="${s.name}" onerror="this.onerror=null;this.src='/logo.png';this.style.objectFit='contain';this.style.padding='6px';this.style.background='#0f0f0f';"></div>`
-                : `<div class="avatar">${initials}</div>`;
+                : `<div class="avatar"><img src="/logo.png" alt="${s.name}" style="width:100%;height:100%;object-fit:contain;padding:6px;background:#0f0f0f;display:block"></div>`;
             const isPlatinum = ['platina','platinum'].includes(normalizeTier(s.tier));
             let social = '';
             try {

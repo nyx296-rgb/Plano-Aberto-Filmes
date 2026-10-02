@@ -510,11 +510,10 @@
             return 'https://'+s.replace(/^\/+/, '');
         }
         function sponsorCard(s) {
-            const initials = s.name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
             const isPlatinum = ['platina','platinum'].includes(normalizeTier(s.tier));
             const logoInner = s.logo_url
                 ? `<img src="${s.logo_url}" alt="${s.name}" onerror="this.onerror=null;this.src='/logo.png';this.style.objectFit='contain';this.style.padding='8px';this.style.background='#0f0f0f';">`
-                : `<div class="logo">${initials}</div>`;
+                : `<img src="/logo.png" alt="${s.name}" style="width:100%;height:100%;object-fit:contain;padding:8px;background:#0f0f0f;display:block">`;
             let social = '';
             try {
                 if (s.social_links) {
