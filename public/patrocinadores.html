@@ -520,7 +520,7 @@
                             if (link.icon_url) {
                                 social += `<a class="social-link social-link--img" href="${href}" target="_blank" rel="noopener noreferrer" title="${plat}" aria-label="${plat} de ${s.name}"><img src="${link.icon_url}" alt=""></a>`;
                             } else {
-                                social += `<a class="social-link" href="${href}" target="_blank" rel="noopener noreferrer" title="${plat}" aria-label="${plat} de ${s.name}"><i class="${iconCls}" aria-hidden="true"></i></a>`;
+                                social += `<a class="social-link social-link--img" href="${href}" target="_blank" rel="noopener noreferrer" title="${plat}" aria-label="${plat} de ${s.name}"><img src="/logo.png" alt=""></a>`;
                             }
                         });
                         social += `</div>`;
@@ -530,8 +530,8 @@
                     const web = s.website ? s.website.replace(/^https?:\/\//,'').replace(/\/$/,'') : '';
                     if (s.instagram || s.website) {
                         social += `<div class="card-socials">`;
-                        if (s.instagram) social += `<a class="social-link" href="https://instagram.com/${ig}" target="_blank" rel="noopener noreferrer" title="${s.instagram}" aria-label="Instagram de ${s.name}"><i class="ti ti-brand-instagram" aria-hidden="true"></i></a>`;
-                        if (s.website) social += `<a class="social-link" href="${s.website}" target="_blank" rel="noopener noreferrer" title="${web}" aria-label="Site de ${s.name}"><i class="ti ti-world" aria-hidden="true"></i></a>`;
+                        if (s.instagram) social += `<a class="social-link social-link--img" href="https://instagram.com/${ig}" target="_blank" rel="noopener noreferrer" title="${s.instagram}" aria-label="Instagram de ${s.name}"><img src="/logo.png" alt=""></a>`;
+                        if (s.website) social += `<a class="social-link social-link--img" href="${s.website}" target="_blank" rel="noopener noreferrer" title="${web}" aria-label="Site de ${s.name}"><img src="/logo.png" alt=""></a>`;
                         social += `</div>`;
                     }
                 }
