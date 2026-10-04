@@ -177,14 +177,10 @@
         .card:hover{transform:translateY(-2px);transition:transform .15s,border-color .15s,box-shadow .15s}
         .tier-platinum .card{box-shadow:0 0 0 1px color-mix(in srgb,var(--tier) 40%,transparent),0 12px 40px color-mix(in srgb,var(--tier) 18%,transparent)}
         .tier-gold .card{box-shadow:0 0 0 1px color-mix(in srgb,var(--tier) 30%,transparent),0 8px 24px color-mix(in srgb,var(--tier) 12%,transparent)}
-        .card-top{height:96px;background:#1a1a1a;border-bottom:1px solid #222;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
-        .tier-platinum .card-top{height:132px}
-        .tier-bronze .card-top{height:72px}
-        .logo{width:72px;height:72px;border-radius:12px;background:#2a2a2a;border:1px solid #333;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--tier);font-size:1.1rem}
-        .tier-platinum .logo{width:96px;height:96px;font-size:1.6rem;border-radius:16px}
-        .tier-bronze .logo{width:40px;height:40px;font-size:.85rem;border-radius:8px}
-        .card-top img{width:100%;height:100%;object-fit:cover}
-        .card-body{padding:14px 14px 12px;flex:1;display:flex;flex-direction:column;gap:4px}
+        .photo{aspect-ratio:1/1;width:100%;background:#0f0f0f;overflow:hidden;flex-shrink:0}
+        .photo img{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
+        .photo img.is-logo{object-fit:contain;padding:16px}
+        .foot{padding:14px 14px 12px;flex:1;display:flex;flex-direction:column;gap:4px}
         .name{font-weight:600;color:#f0f0f0;line-height:1.2}
         .tier-platinum .name{font-size:1.05rem}
         .tier-gold .name{font-size:.95rem}
@@ -456,9 +452,10 @@
         }
         function sponsorCard(s) {
             const isPlatinum = ['platina','platinum'].includes(normalizeTier(s.tier));
-            const logoInner = s.logo_url
-                ? `<img src="${s.logo_url}" alt="${s.name}" onerror="this.onerror=null;this.src='/logo.png';this.style.objectFit='contain';this.style.padding='8px';this.style.background='#0f0f0f';">`
-                : `<img src="/logo.png" alt="${s.name}" style="width:100%;height:100%;object-fit:contain;padding:8px;background:#0f0f0f;display:block">`;
+            const hasLogo = !!s.logo_url;
+            const photo = hasLogo
+                ? `<div class="photo"><img src="${s.logo_url}" alt="${s.name}" class="is-logo" onerror="this.onerror=null;this.src='/logo.png';"></div>`
+                : `<div class="photo"><img src="/logo.png" alt="${s.name}" class="is-logo"></div>`;
             let social = '';
             try {
                 if (s.social_links) {
@@ -475,7 +472,6 @@
                     }
                 } else {
                     const ig = s.instagram ? s.instagram.replace('@','') : '';
-                    const web = s.website ? s.website.replace(/^https?:\/\//,'').replace(/\/$/,'') : '';
                     if (s.instagram || s.website) {
                         social += `<ul class="card-socials">`;
                         if (s.instagram) social += `<li><a class="social-link" href="https://instagram.com/${ig}" target="_blank" rel="noopener noreferrer">Instagram</a></li>`;
@@ -486,7 +482,7 @@
             } catch (e) {}
             const shine = isPlatinum ? `<div class="shine"></div>` : '';
             const desc = s.description ? `<p class="desc">${s.description}</p>` : '';
-            return `<div class="card">${shine}<div class="card-top">${logoInner}</div><div class="card-body"><p class="name">${s.name}</p>${desc}${social}</div></div>`;
+            return `<div class="card">${shine}${photo}<div class="foot"><p class="name">${s.name}</p>${desc}${social}</div></div>`;
         }
 
         const emptyMsg = '<p style="color:#555; padding:1rem;">Seja nosso primeiro patrocinador.</p>';

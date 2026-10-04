@@ -174,20 +174,15 @@
         .grid-silver{grid-template-columns:repeat(4,1fr)}
         .grid-bronze{grid-template-columns:repeat(6,1fr)}
         .card{background:#141414;border:1px solid color-mix(in srgb,var(--tier) 45%,var(--paf-border));border-radius:16px;overflow:hidden;text-align:center;position:relative;display:flex;flex-direction:column}
+        .card:hover{transform:translateY(-2px);transition:transform .15s,border-color .15s,box-shadow .15s}
+        .tier-platinum .card{box-shadow:0 0 0 1px color-mix(in srgb,var(--tier) 40%,transparent),0 12px 40px color-mix(in srgb,var(--tier) 18%,transparent)}
+        .tier-gold .card{box-shadow:0 0 0 1px color-mix(in srgb,var(--tier) 30%,transparent),0 8px 24px color-mix(in srgb,var(--tier) 12%,transparent)}
+        .photo{aspect-ratio:1/1;width:100%;background:#0f0f0f;overflow:hidden;flex-shrink:0}
+        .photo img{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
+        .foot{padding:10px 10px 12px;text-align:center;flex:1;display:flex;flex-direction:column;gap:4px;justify-content:center}
         .empty-cta{border:1px dashed color-mix(in srgb,var(--tier) 35%,#333);border-radius:14px;padding:22px;text-align:center;color:var(--muted);background:rgba(255,255,255,.02)}
         .empty-cta a{display:inline-flex;margin-top:10px;padding:8px 14px;background:var(--tier);color:#000;border-radius:999px;text-decoration:none;font-weight:700;font-size:.82rem}
         .empty-cta a:hover{opacity:.9}
-        .card:hover{transform:translateY(-2px);transition:transform .15s,border-color .15s,box-shadow .15s}
-        .tier-platinum .card{padding:22px 16px;box-shadow:0 0 0 1px color-mix(in srgb,var(--tier) 40%,transparent),0 12px 40px color-mix(in srgb,var(--tier) 18%,transparent)}
-        .tier-gold .card{padding:18px 14px;box-shadow:0 0 0 1px color-mix(in srgb,var(--tier) 30%,transparent),0 8px 24px color-mix(in srgb,var(--tier) 12%,transparent)}
-        .tier-silver .card{padding:16px 12px}
-        .tier-bronze .card{padding:14px 10px}
-        .avatar{margin:0 auto 10px;border-radius:50%;background:#222;display:flex;align-items:center;justify-content:center;color:var(--tier);font-weight:700;border:2px solid color-mix(in srgb,var(--tier) 35%,transparent);overflow:hidden;flex-shrink:0}
-        .tier-platinum .avatar{width:96px;height:96px;font-size:1.8rem}
-        .tier-gold .avatar{width:72px;height:72px;font-size:1.3rem}
-        .tier-silver .avatar{width:56px;height:56px;font-size:1rem}
-        .tier-bronze .avatar{width:48px;height:48px;font-size:.9rem}
-        .avatar img{width:100%;height:100%;object-fit:cover}
         .name{font-weight:600;color:#f0f0f0;line-height:1.2}
         .tier-platinum .name{font-size:1.05rem}
         .tier-gold .name{font-size:.95rem}
@@ -466,10 +461,9 @@
             return 'https://'+s.replace(/^\/+/, '');
         }
         function supporterCard(s) {
-            const hasPhoto = !!s.photo_url;
-            const avatar = hasPhoto
-                ? `<div class="avatar"><img src="${s.photo_url}" alt="${s.name}" onerror="this.onerror=null;this.src='/logo.png';this.style.objectFit='contain';this.style.padding='6px';this.style.background='#0f0f0f';"></div>`
-                : `<div class="avatar"><img src="/logo.png" alt="${s.name}" style="width:100%;height:100%;object-fit:contain;padding:6px;background:#0f0f0f;display:block"></div>`;
+            const photo = s.photo_url
+                ? `<div class="photo"><img src="${s.photo_url}" alt="${s.name}" onerror="this.onerror=null;this.src='/logo.png';this.style.objectFit='contain';this.style.padding='12px';"></div>`
+                : `<div class="photo"><img src="/logo.png" alt="${s.name}" style="object-fit:contain;padding:12px"></div>`;
             const isPlatinum = ['platina','platinum'].includes(normalizeTier(s.tier));
             let social = '';
             try {
@@ -489,7 +483,7 @@
             } catch (e) {}
             const shine = isPlatinum ? `<div class="shine"></div>` : '';
             const role = s.description ? `<p class="role">${s.description}</p>` : '';
-            return `<div class="card">${shine}${avatar}<p class="name">${s.name}</p>${role}${social}</div>`;
+            return `<div class="card">${shine}${photo}<div class="foot"><p class="name">${s.name}</p>${role}${social}</div></div>`;
         }
 
         async function loadData() {
