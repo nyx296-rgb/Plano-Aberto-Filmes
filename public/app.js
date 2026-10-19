@@ -183,7 +183,7 @@ async function renderHome() {
         app.innerHTML = `
         <section class="hero" style="padding: 6rem 1rem 4rem; position: relative; text-align: center;">
             <div class="max-w-4xl mx-auto px-4" style="position: relative; z-index: 10;">
-                <img src="/logo.png" alt="Plano Aberto" class="hero-logo" style="width: 180px; height: 180px; margin: 0 auto 3rem; display: block; filter: drop-shadow(0 0 20px rgba(0,0,0,0.5));">
+                <img src="/logo.png" alt="Plano Aberto" class="hero-logo" style="width: 240px; height: 240px; margin: 0 auto 3rem; display: block; filter: drop-shadow(0 0 20px rgba(0,0,0,0.5));">
                 
                 <h1 style="font-size: 3.5rem; font-weight: 700; margin-bottom: 0.5rem; color: #fff; letter-spacing: -0.02em; text-shadow: 0 4px 10px rgba(0,0,0,0.8);">Plano Aberto Filmes</h1>
                 <p style="font-size: 1.25rem; font-weight: 500; margin-bottom: 1rem; color: #fff; text-shadow: 0 2px 5px rgba(0,0,0,0.8);">Artigos e Vídeos sobre Cinema</p>
@@ -193,11 +193,11 @@ async function renderHome() {
                 <div class="hero-partner-logos" style="display: flex; justify-content: center; gap: 8rem; margin-top: 2rem;">
                     <div style="text-align: center;">
                         <p style="font-size: 1.1rem; font-weight: 600; color: #fff; margin-bottom: 1rem; text-shadow: 0 2px 5px rgba(0,0,0,0.8);">Samuca SC Filmes</p>
-                        <img src="/samuca-sc-filmes_circular.png" alt="Samuca SC Filmes" style="width: 280px; height: 280px; border-radius: 50%; object-fit: cover; box-shadow: 0 10px 30px rgba(0,0,0,0.8);">
+                        <img src="/samuca-sc-filmes_circular.png" alt="Samuca SC Filmes" style="width: 140px; height: 140px; border-radius: 50%; object-fit: cover; box-shadow: 0 10px 30px rgba(0,0,0,0.8);">
                     </div>
                     <div style="text-align: center;">
                         <p style="font-size: 1.1rem; font-weight: 600; color: #fff; margin-bottom: 1rem; text-shadow: 0 2px 5px rgba(0,0,0,0.8);">Novo Cine Debate</p>
-                        <img src="/cinedebate_circle.png" alt="Novo Cine Debate" style="width: 280px; height: 280px; border-radius: 50%; object-fit: cover; box-shadow: 0 10px 30px rgba(0,0,0,0.8);">
+                        <img src="/cinedebate_circle.png" alt="Novo Cine Debate" style="width: 140px; height: 140px; border-radius: 50%; object-fit: cover; box-shadow: 0 10px 30px rgba(0,0,0,0.8);">
                     </div>
                 </div>
             </div>

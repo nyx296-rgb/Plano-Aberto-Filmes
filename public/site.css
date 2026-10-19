@@ -256,8 +256,8 @@ header nav > div a.active {
     pointer-events: none;
 }
 .hero-logo {
-    width: 160px;
-    height: 160px;
+    width: 240px;
+    height: 240px;
     object-fit: contain;
     margin-bottom: 1rem;
 }
@@ -695,12 +695,13 @@ header nav a:hover { color: white; }
     background-repeat: no-repeat;
 }
 .hero-logo {
-    width: 160px;
-    height: 160px;
+    width: 240px;
+    height: 240px;
     margin: 0 auto 2.5rem;
     object-fit: contain;
     filter: drop-shadow(0 0 30px rgba(229,9,20,0.2));
     display: block;
+    transform: translateX(-3px);
 }
 .hero h1 {
     font-size: 3.5rem;
@@ -1130,7 +1131,7 @@ footer nav a:hover { color: white; }
     .hero h1 { font-size: 2.2rem !important; }
     
     .hero-partner-logos { flex-direction: column; gap: 2.5rem !important; }
-    .hero-partner-logos img { width: 200px !important; height: 200px !important; }
+    .hero-partner-logos img { width: 140px !important; height: 140px !important; }
     .hero-partner-logos > div { display: flex; flex-direction: column; align-items: center; }
 
     .article-meta, .video-meta { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
