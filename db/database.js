@@ -66,6 +66,7 @@ function initializeSchema() {
     CREATE TABLE IF NOT EXISTS articles (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       title TEXT NOT NULL,
+      slug TEXT UNIQUE,
       content TEXT,
       excerpt TEXT,
       image_url TEXT,
@@ -79,6 +80,7 @@ function initializeSchema() {
     CREATE TABLE IF NOT EXISTS videos (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       title TEXT NOT NULL,
+      slug TEXT UNIQUE,
       description TEXT,
       video_url TEXT,
       thumbnail_url TEXT,
@@ -147,6 +149,12 @@ function initializeSchema() {
   try { db.run("ALTER TABLE users ADD COLUMN show_on_contact INTEGER DEFAULT 0"); } catch(e) {}
   try { db.run("ALTER TABLE users ADD COLUMN role_name TEXT"); } catch(e) {}
   try { db.run("ALTER TABLE users ADD COLUMN bio TEXT"); } catch(e) {}
+
+  // Schema migrations: articles table - slug column
+  try { db.run("ALTER TABLE articles ADD COLUMN slug TEXT UNIQUE"); } catch(e) {}
+
+  // Schema migrations: articles table - slug column
+  try { db.run("ALTER TABLE videos ADD COLUMN slug TEXT UNIQUE"); } catch(e) {}
 
   // Schema migrations: comments table
   try { db.run("ALTER TABLE comments ADD COLUMN parent_id INTEGER"); } catch(e) {}

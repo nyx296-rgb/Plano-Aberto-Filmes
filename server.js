@@ -246,13 +246,11 @@ app.get(['/articles/:slug', '/news/:slug'], (req, res) => {
   let item = null;
   let ogImage = '/logo.png';
 
-  const slugify = (text) => String(text || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/-{2,}/g, '-').replace(/-+$/, '').replace(/^-+/, '');
-
   if (!isNaN(slug) && slug !== '') {
-    item = db.prepare('SELECT * FROM articles WHERE id = ?').get(slug);
+    item = db.prepare('SELECT * FROM articles WHERE slug = ?').get(slug);
   } else {
     const all = db.prepare('SELECT * FROM articles').all();
-    item = all.find(a => slugify(a.title) === slug || slugify(a.title).replace(/-/g, '') === slug.replace(/-/g, ''));
+    item = all.find(a => a.slug === slug);
   }
 
   let ogTags = '';
@@ -287,13 +285,11 @@ app.get('/videos/:slug', (req, res) => {
   let item = null;
   let ogImage = '/logo.png';
 
-  const slugify = (text) => String(text || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/-{2,}/g, '-').replace(/-+$/, '').replace(/^-+/, '');
-
   if (!isNaN(slug) && slug !== '') {
-    item = db.prepare('SELECT * FROM videos WHERE id = ?').get(slug);
+    item = db.prepare('SELECT * FROM videos WHERE slug = ?').get(slug);
   } else {
     const all = db.prepare('SELECT * FROM videos').all();
-    item = all.find(v => slugify(v.title) === slug);
+    item = all.find(v => v.slug === slug);
   }
 
   let ogTags = '';
