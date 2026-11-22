@@ -30,15 +30,16 @@ router.get('/articles/:id', (req, res) => {
     article = db.prepare('SELECT * FROM articles WHERE id = ?').get(param);
   } else {
     // Lookup by stored slug
-    const article = db.prepare('SELECT * FROM articles WHERE slug = ?').get(param);
-    if (article) return res.json(article);
+    const articleBySlug = db.prepare('SELECT * FROM articles WHERE slug = ?').get(param);
+    if (articleBySlug) return res.json(articleBySlug);
     
     // Fallback: generate slug from title for backward compatibility
     const allArticles = db.prepare('SELECT * FROM articles').all();
-    article = allArticles.find(a => {
+    const foundArticle = allArticles.find(a => {
       const slug = makeSlug(a.title);
       return slug === param;
     });
+    article = foundArticle;
   }
 
   if (!article) {
