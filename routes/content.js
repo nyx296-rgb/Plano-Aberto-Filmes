@@ -73,7 +73,7 @@ router.post('/articles', authenticateToken, (req, res) => {
 
   const result = db.prepare(`
     INSERT INTO articles (title, slug, content, excerpt, image_url, author, category, status)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `).run(title, finalSlug, content, excerpt, image_url, author, category, status);
 
   res.json({ id: result.lastInsertRowid, title, slug: finalSlug, status });
@@ -186,7 +186,7 @@ router.post('/videos', authenticateToken, (req, res) => {
   }
 
   const result = db.prepare(`
-    INSERT INTO videos (title, slug, description, video_url, thumbnail_url, author, category, status)
+    INSERT INTO videos (title, description, video_url, thumbnail_url, author, category, status)
     VALUES (?, ?, ?, ?, ?, ?, ?)
   `).run(title, finalSlug, description, video_url, thumbnail_url, author, category, status);
 
